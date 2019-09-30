@@ -1,19 +1,12 @@
-#include <iostream>
-#include <string.h>
-#include <cstdlib>
-#include <windef.h>
-#include <GL/freeglut.h>
-#include <cmath>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <list>
-#include <iterator>
-#include <algorithm>
-#include <string>
+#include "Libs.h"
+#include "Entity.cpp"
+
+#define TITLE "Bouncing Square in a Tractor Trailer Truck"
 
 using namespace std;
+
+
+#include "Game.h"
 
 
 // --- CONSTANTS --- //
@@ -23,8 +16,10 @@ const int	WINDOW_WIDTH = 640,
 			WINDOW_START_POS_X = 50,
 			WINDOW_START_POS_Y = 50;
 
-const std::string
+/*
+const char*
 			TITLE = "Bouncing Square in a Tractor Trailer Truck";
+*/
 
 float delta, ts, _ts;
 
@@ -56,6 +51,8 @@ void update(){
 
 void display(){
 
+	update();
+
 }
 
 void reshape(GLsizei width, GLsizei height) {
@@ -82,4 +79,18 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
+void build_window(){
+	glutInit();
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(WINDOW_START_POS_X, WINDOW_START_POS_Y);
+	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	glutCreateWindow(TITLE);
+	init();
+	glutIdleFunc(update);
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
+	glutMainLoop();
+}
+
 

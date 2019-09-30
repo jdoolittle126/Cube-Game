@@ -1,3 +1,7 @@
+#pragma once
+
+#include <iostream>
+#include <stdio.h>
 #include <iostream>
 #include <string.h>
 #include <cstdlib>
@@ -11,12 +15,4 @@
 #include <list>
 #include <iterator>
 #include <algorithm>
-#include "Entity.cpp"
-
-#define PI 3.14159265
-
-class Player: public Entity {
-
-
-
-};
+#include <string>
