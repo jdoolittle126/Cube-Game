@@ -19,6 +19,12 @@
 #define PI 3.14159265
 #define TITLE "hehe"
 
+/*
+ * TODO
+ * Could probably clean up all the getter/setters with vectors (x, y, z) but eh
+ * This game will be one mega file don't change my mind
+ */
+
 using namespace std;
 
 // --- CONSTANTS --- //
@@ -440,37 +446,33 @@ bool Entity::check_collide(){
 }
 
 bool Entity::check_collide_x(){
-	bool b = true;
 	for(list<glm::vec4*>::iterator iterator = verts.begin(); iterator != verts.end(); iterator++){
 		glm::vec4* t = *iterator;
-		if((t->x >= bound_x_right || t->x <= bound_x_left) && b){
-			b = false;
+		if((t->x >= bound_x_right || t->x <= bound_x_left)){
+			return true;
 		}
-
 	}
-	return !b;
+	return false;
 }
 
 bool Entity::check_collide_y(){
-	bool b = true;
 	for(list<glm::vec4*>::iterator iterator = verts.begin(); iterator != verts.end(); iterator++){
 		glm::vec4* t = *iterator;
-		if((t->y >= bound_y_top || t->y <= bound_y_bottom) && b){
-			b = false;
+		if((t->y >= bound_y_top || t->y <= bound_y_bottom)){
+			return true;
 		}
 	}
-	return !b;
+	return false;
 }
 
 bool Entity::check_collide_z(){
-	bool b = true;
 	for(list<glm::vec4*>::iterator iterator = verts.begin(); iterator != verts.end(); iterator++){
 		glm::vec4* t = *iterator;
-		if((t->z >= bound_z_close || t->z <= bound_z_far) && b){
-			b = false;
+		if((t->z >= bound_z_close || t->z <= bound_z_far)){
+			return true;
 		}
 	}
-	return !b;
+	return false;
 }
 
 void Entity::pos_step_back(){
