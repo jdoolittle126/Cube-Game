@@ -1,0 +1,89 @@
+#pragma once
+
+#include "../Core/WorldObject.h"
+#include "../Core/Libraries.h"
+#include "../Map/WorldMap.h"
+
+class Entity : public WorldObject {
+	public:
+		float 		vel_x,
+					vel_y,
+					vel_z,
+					vel_yaw,
+					vel_pitch,
+					vel_roll,
+					accel_x,
+					accel_y,
+					accel_z,
+					accel_yaw,
+					accel_pitch,
+					accel_roll,
+					_pos_x,
+					_pos_y,
+					_pos_z,
+					_pitch,
+					_yaw,
+					_roll;
+
+		WorldMap* map;
+
+		bool has_accels = false,
+				has_accel_x = true,
+				has_accel_y = true,
+				has_accel_z = true;
+
+		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll)
+		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll)
+		{
+			vel_x = 0.0f;
+			vel_y = 0.0f;
+			vel_z = 0.0f;
+			vel_yaw = 0.0f;
+			vel_pitch = 0.0f;
+			vel_roll = 0.0f;
+			accel_x = 0.0f;
+			accel_y = -9.81f;
+			accel_z = 0.0f;
+			accel_yaw = 0.0f;
+			accel_pitch = 0.0f;
+			accel_roll = 0.0f;
+		}
+		void update(float delta);
+		void display(float delta);
+		void set_world_map(WorldMap* m){
+			map = m;
+		}
+
+		void allow_accels(bool a);
+		void allow_accel_x(bool a);
+		void allow_accel_y(bool a);
+		void allow_accel_z(bool a);
+		float get_vel_x();
+		float get_vel_y();
+		float get_vel_z();
+		float get_vel_roll();
+		float get_vel_yaw();
+		float get_vel_pitch();
+		void set_vel_x(float n);
+		void set_vel_y(float n);
+		void set_vel_z(float n);
+		void set_vel_roll(float n);
+		void set_vel_yaw(float n);
+		void set_vel_pitch(float n);
+		float get_accel_x();
+		float get_accel_y();
+		float get_accel_z();
+		float get_accel_roll();
+		float get_accel_yaw();
+		float get_accel_pitch();
+		void set_accel_x(float n);
+		void set_accel_y(float n);
+		void set_accel_z(float n);
+		void set_accel_roll(float n);
+		void set_accel_yaw(float n);
+		void set_accel_pitch(float n);
+		void pos_update(float delta);
+		bool does_collide();
+		void check_collide();
+		void update_verts();
+};
