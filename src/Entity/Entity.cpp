@@ -5,18 +5,6 @@ void Entity::allow_accels(bool a){
 	has_accels = a;
 }
 
-void Entity::allow_accel_x(bool a){
-
-}
-
-void Entity::allow_accel_y(bool a){
-
-}
-
-void Entity::allow_accel_z(bool a){
-
-}
-
 float Entity::get_vel_x(){
 	return vel_x;
 }
@@ -123,17 +111,17 @@ void Entity::pos_update(float delta) {
 	_pos_x = pos_x;
 	_pos_y = pos_y;
 	_pos_z = pos_z;
-	_pitch = pos_pitch;
-	_yaw = pos_yaw;
-	_roll = pos_roll;
+	_pos_pitch = pos_pitch;
+	_pos_yaw = pos_yaw;
+	_pos_roll = pos_roll;
 
 	if(has_accels){
 		if(has_accel_x) vel_x += accel_x * d;
 		if(has_accel_y) vel_y += accel_y * d;
 		if(has_accel_z) vel_z += accel_z * d;
-		vel_pitch += accel_pitch * d;
-		vel_yaw += accel_yaw * d;
-		vel_roll += accel_roll * d;
+		if(has_accel_pitch) vel_pitch += accel_pitch * d;
+		if(has_accel_yaw) vel_yaw += accel_yaw * d;
+		if(has_accel_roll) vel_roll += accel_roll * d;
 	}
 	pos_x += vel_x * d;
 	pos_y += vel_y * d;
@@ -179,9 +167,31 @@ void Entity::update_verts(){
 }
 
 void Entity::check_collide() {
+		has_accel_x = has_accel_y = has_accel_z = has_accel_pitch = has_accel_yaw = has_accel_roll = true;
+
+		build_rot(pos_pitch, _pos_yaw, _pos_roll);
+		update_verts();
+		if(does_collide()) {
+			pos_pitch = _pos_pitch;
+			has_accel_pitch = false;
+		}
+
+		build_rot(_pos_pitch, pos_yaw, _pos_roll);
+		update_verts();
+		if(does_collide()) {
+			pos_yaw = _pos_yaw;
+			has_accel_yaw = false;
+		}
+
+		build_rot(_pos_pitch, _pos_yaw, pos_roll);
+		update_verts();
+		if(does_collide()) {
+			pos_roll = _pos_roll;
+			has_accel_roll = false;
+		}
+
 		build_translate(pos_x, _pos_y, _pos_z);
 		update_verts();
-		has_accel_x = has_accel_y = has_accel_z = true;
 		if(does_collide()) {
 			pos_x = _pos_x;
 			has_accel_x = false;
@@ -204,7 +214,6 @@ void Entity::check_collide() {
 void Entity::update(float delta) {
 
 	pos_update(delta);
-	build_rot(pos_pitch, pos_yaw, pos_roll);
 	build_scale(scale_x, scale_y, scale_z);
 
 	check_collide();

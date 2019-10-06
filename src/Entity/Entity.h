@@ -21,16 +21,14 @@ class Entity : public WorldObject {
 					_pos_x,
 					_pos_y,
 					_pos_z,
-					_pitch,
-					_yaw,
-					_roll;
+					_pos_pitch,
+					_pos_yaw,
+					_pos_roll;
 
 		WorldMap* map;
 
-		bool has_accels = false,
-				has_accel_x = true,
-				has_accel_y = true,
-				has_accel_z = true;
+		bool 	has_accels = false,
+				has_accel_x = false, has_accel_y = false, has_accel_z = false, has_accel_pitch = false, has_accel_yaw = false, has_accel_roll = false;
 
 		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll)
 		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll)
@@ -55,9 +53,6 @@ class Entity : public WorldObject {
 		}
 
 		void allow_accels(bool a);
-		void allow_accel_x(bool a);
-		void allow_accel_y(bool a);
-		void allow_accel_z(bool a);
 		float get_vel_x();
 		float get_vel_y();
 		float get_vel_z();
