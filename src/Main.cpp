@@ -22,7 +22,7 @@ class Game {
 		float gravity = -9.81f;
 
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(0.5f, 0.0f, 0.0f, -2.0f, 0.0f, 0.0f, 0.0f);
+		Entity* test = new Entity(0.5f, 0.0f, 0.0f, -5.0f, 90.0f, 0.0f, 0.0f);
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -59,6 +59,14 @@ class Game {
 			}
 		}
 
+		void build_map() {
+
+			for(int i = 0; i < 5; i++){
+				map->create_tile(i, -2.0f+i, -5.0f-i);
+				map->create_tile(-i, -2.0f+i, -5.0f-i);
+			}
+		}
+
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
 				//gluLookAt(cam_x, cam_y, cam_z, cam_focus_x, cam_focus_y, cam_focus_z, cam_yaw, cam_pitch, cam_roll);
@@ -70,8 +78,7 @@ class Game {
 					case 'q': test->set_vel_yaw(-45.0f); break;
 					case 'e': test->set_vel_yaw(45.0f); break;
 					case 'r': test->allow_accels(true); break;
-					case 'o': map->create_tile(0.0f, -1.0f, -2.0f); break;
-					case 'p': map->create_tile(-1.0f, 0.0f, -2.0f); break;
+					case 'o': build_map(); break;
 					case 32: test->set_vel_y(5.0f); break;
 					case 'x': exit(0);
 				}
