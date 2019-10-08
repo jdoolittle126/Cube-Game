@@ -80,5 +80,4 @@ class Entity : public WorldObject {
 		void pos_update(float delta);
 		bool does_collide();
 		void check_collide();
-		void update_verts();
 };

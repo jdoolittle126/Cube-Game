@@ -1,5 +1,6 @@
 #include "Entity/Entity.h"
 #include "Map/WorldMap.h"
+#include <iostream>
 
 #define TITLE "hehe"
 
@@ -7,6 +8,8 @@
 
 const int	WINDOW_WIDTH = 640,
 			WINDOW_HEIGHT = 480;
+
+bool flag = true;
 
 
 // --- -------- --- //
@@ -60,7 +63,6 @@ class Game {
 		}
 
 		void build_map() {
-
 			for(int i = 0; i < 5; i++){
 				map->create_tile(i, -2.0f+i, -5.0f-i);
 				map->create_tile(-i, -2.0f+i, -5.0f-i);
@@ -78,7 +80,7 @@ class Game {
 					case 'q': test->set_vel_yaw(-45.0f); break;
 					case 'e': test->set_vel_yaw(45.0f); break;
 					case 'r': test->allow_accels(true); break;
-					case 'o': build_map(); break;
+					case 'o': build_map();break;
 					case 32: test->set_vel_y(5.0f); break;
 					case 'x': exit(0);
 				}

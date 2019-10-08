@@ -22,25 +22,9 @@ public:
 				pos_yaw,
 				pos_roll;
 
-	std::list<glm::vec4*>
-				verts;
-
-	glm::vec4 	vert0,
-				vert1,
-				vert2,
-				vert3,
-				vert4,
-				vert5,
-				vert6,
-				vert7,
-				_vert0,
-				_vert1,
-				_vert2,
-				_vert3,
-				_vert4,
-				_vert5,
-				_vert6,
-				_vert7;
+	std::vector<glm::vec4*> bbverts;
+	std::vector<glm::vec4*> bb_verts;
+	std::vector<glm::vec4*> model_verts;
 
 	glm::mat4x4 mat_transform,
 				_mat_transform,
@@ -56,28 +40,31 @@ public:
 		pos_yaw = i_yaw;
 		pos_pitch = i_pitch;
 		pos_roll = i_roll;
-		vert0 = glm::vec4(-size, size, size, 1.0f);
-		vert1 = glm::vec4(-size, size, -size, 1.0f);
-		vert2 = glm::vec4(size, size, -size, 1.0f);
-		vert3 = glm::vec4(size, size, size, 1.0f);
-		vert4 = glm::vec4(-size, -size, size, 1.0f);
-		vert5 = glm::vec4(-size, -size, -size, 1.0f);
-		vert6 = glm::vec4(size, -size, -size, 1.0f);
-		vert7 = glm::vec4(size, -size, size, 1.0f);
 
-		verts.push_back(&_vert0);
-		verts.push_back(&_vert1);
-		verts.push_back(&_vert2);
-		verts.push_back(&_vert3);
-		verts.push_back(&_vert4);
-		verts.push_back(&_vert5);
-		verts.push_back(&_vert6);
-		verts.push_back(&_vert7);
+		bbverts.push_back(new glm::vec4(-size, size, size, 1.0f));
+		bbverts.push_back(new glm::vec4(-size, size, -size, 1.0f));
+		bbverts.push_back(new glm::vec4(size, size, -size, 1.0f));
+		bbverts.push_back(new glm::vec4(size, size, size, 1.0f));
+		bbverts.push_back(new glm::vec4(-size, -size, size, 1.0f));
+		bbverts.push_back(new glm::vec4(-size, -size, -size, 1.0f));
+		bbverts.push_back(new glm::vec4(size, -size, -size, 1.0f));
+		bbverts.push_back(new glm::vec4(size, -size, size, 1.0f));
+
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+		bb_verts.push_back(new glm::vec4);
+
 	}
 
 
 	void update(float delta);
 	void display(float delta);
+	void update_verts();
 	float get_pos_x();
 	float get_pos_y();
 	float get_pos_z();

@@ -85,56 +85,55 @@ void WorldObject::draw_face(glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d) 
 	glVertex3f(d.x, d.y, d.z);
 }
 
+void WorldObject::update_verts(){
+	mat_transform = mat_rot * mat_translate * mat_scale;
+	for(unsigned int i = 0; i < bb_verts.size(); i++) {
+		*bb_verts.at(i) = *bbverts.at(i) * mat_transform;
+	}
+}
+
 void WorldObject::update(float delta) {
 	build_translate(pos_x, pos_y, pos_z);
 	build_rot(pos_pitch, pos_yaw, pos_roll);
 	build_scale(scale_x, scale_y, scale_z);
-	mat_transform = mat_rot * mat_translate * mat_scale;
-
-	_vert0 = vert0 * mat_transform,
-	_vert1 = vert1 * mat_transform,
-	_vert2 = vert2 * mat_transform,
-	_vert3 = vert3 * mat_transform,
-	_vert4 = vert4 * mat_transform,
-	_vert5 = vert5 * mat_transform,
-	_vert6 = vert6 * mat_transform,
-	_vert7 = vert7 * mat_transform;
-
+	update_verts();
 }
 
 void WorldObject::display(float delta) {
-		glBegin(GL_QUADS);
-			//TOP (a, b, c, d)
-			update_color(0);
-			draw_face(_vert0, _vert1, _vert2, _vert3);
 
-			//BOTTOM (e, f, g, h)
-			update_color(1);
-			draw_face(_vert4, _vert5, _vert6, _vert7);
+		if(model_verts.size() == 0) {
+			glBegin(GL_QUADS);
+				//TOP (a, b, c, d)
+				update_color(0);
+				draw_face(*bb_verts.at(0), *bb_verts.at(1), *bb_verts.at(2), *bb_verts.at(3));
 
-			//FRONT (a, d, h, e)
-			update_color(2);
-			draw_face(_vert0, _vert3, _vert7, _vert4);
+				//BOTTOM (e, f, g, h)
+				update_color(1);
+				draw_face(*bb_verts.at(4), *bb_verts.at(5), *bb_verts.at(6), *bb_verts.at(7));
 
-			//BACK (b, c, f, g)
-			update_color(3);
-			draw_face(_vert1, _vert2, _vert6, _vert5);
+				//FRONT (a, d, h, e)
+				update_color(2);
+				draw_face(*bb_verts.at(0), *bb_verts.at(3), *bb_verts.at(7), *bb_verts.at(4));
 
-			//LEFT (a, b, e, f)
-			update_color(4);
-			draw_face(_vert0, _vert1, _vert5, _vert4);
+				//BACK (b, c, f, g)
+				update_color(3);
+				draw_face(*bb_verts.at(1), *bb_verts.at(2), *bb_verts.at(6), *bb_verts.at(5));
 
-			//RIGHT (d, c, h, g)
-			update_color(5);
-			draw_face(_vert3, _vert2, _vert6, _vert7);
-		glEnd();
+				//LEFT (a, b, e, f)
+				update_color(4);
+				draw_face(*bb_verts.at(0), *bb_verts.at(1), *bb_verts.at(5), *bb_verts.at(4));
+
+				//RIGHT (d, c, h, g)
+				update_color(5);
+				draw_face(*bb_verts.at(3), *bb_verts.at(2), *bb_verts.at(6), *bb_verts.at(7));
+			glEnd();
+		}
 }
 
 cubeBound WorldObject::get_bounds() {
 	cubeBound b;
 	bool flag = true;
-	for(std::list<glm::vec4*>::iterator iterator = verts.begin(); iterator != verts.end(); iterator++){
-		glm::vec4* t = *iterator;
+	for(auto t : bb_verts){
 		if(flag) {
 			b.x1 = t->x;
 			b.x2 = t->x;

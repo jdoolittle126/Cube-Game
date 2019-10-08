@@ -146,7 +146,7 @@ void Entity::pos_update(float delta) {
 }
 
 bool Entity::does_collide(){
-	for(auto &p : verts) {
+	for(auto &p : bb_verts) {
 		for(auto &b : map->get_world_bounds()) {
 			if((p->x >= b.x1 && p->x <= b.x2)&&(p->y >= b.y1 && p->y <= b.y2)&&(p->z >= b.z1 && p->z <= b.z2)) return true;
 		}
@@ -154,17 +154,6 @@ bool Entity::does_collide(){
 	return false;
 }
 
-void Entity::update_verts(){
-	mat_transform = mat_rot * mat_translate * mat_scale;
-	_vert0 = vert0 * mat_transform,
-	_vert1 = vert1 * mat_transform,
-	_vert2 = vert2 * mat_transform,
-	_vert3 = vert3 * mat_transform,
-	_vert4 = vert4 * mat_transform,
-	_vert5 = vert5 * mat_transform,
-	_vert6 = vert6 * mat_transform,
-	_vert7 = vert7 * mat_transform;
-}
 
 void Entity::check_collide() {
 		has_accel_x = has_accel_y = has_accel_z = has_accel_pitch = has_accel_yaw = has_accel_roll = true;
@@ -219,7 +208,6 @@ void Entity::update(float delta) {
 	check_collide();
 
 	build_translate(pos_x, pos_y, pos_z);
-	mat_transform = mat_rot * mat_translate * mat_scale;
 	update_verts();
 
 }
