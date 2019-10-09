@@ -9,7 +9,18 @@
 const int	WINDOW_WIDTH = 640,
 			WINDOW_HEIGHT = 480;
 
-bool flag = true;
+static const GLfloat g_vertex_buffer_data[] = {
+   -1.0f, -1.0f, 0.0f,
+   1.0f, -1.0f, 0.0f,
+   0.0f,  1.0f, 0.0f,
+};
+
+// --- -------- --- //
+
+GLuint programID;
+GLuint vertexbuffer;
+GLuint VertexArrayID;
+
 
 
 // --- -------- --- //
@@ -154,13 +165,67 @@ class Game {
 Game* game = new Game();
 float w_x, w_y;
 
+GLuint setup_shaders() {
+	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	const char *vs =
+		  "#version 330 core										"
+		  "layout(location = 0) in vec3 vertexPosition_modelspace;	"
+		  "void main() {											"
+		  "	gl_Position.xyz = vertexPosition_modelspace;			"
+		  "	gl_Position.w = 1.0;									"
+		  "}														" ;
+	const char *fs =
+		  "#version 330 core										"
+		  "out vec3 color;											"
+		  "void main() {											"
+		  "	color = vec3(1,0,0);									"
+		  "}														";
+
+	glShaderSource(VertexShaderID, 1, &vs, NULL);
+	glCompileShader(VertexShaderID);
+
+	glShaderSource(FragmentShaderID, 1, &fs, NULL );
+	glCompileShader(FragmentShaderID );
+
+	GLuint ProgramID = glCreateProgram();
+	glAttachShader(ProgramID, VertexShaderID);
+	glAttachShader(ProgramID, FragmentShaderID);
+	glLinkProgram(ProgramID);
+	glDetachShader(ProgramID, VertexShaderID);
+	glDetachShader(ProgramID, FragmentShaderID);
+
+	glDeleteShader(VertexShaderID);
+	glDeleteShader(FragmentShaderID);
+
+	return ProgramID;
+}
+
+
 void reshape(int w, int h) {
 	game->reshape(w, h);
 }
 
 void render() {
-	game->update();
-	game->display();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(programID);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(
+	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	);
+	// Draw the triangle !
+	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+	glDisableVertexAttribArray(0);
+
+	//game->update();
+	//game->display();
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -206,6 +271,11 @@ int main(int argc, char** argv) {
 	glutInitWindowSize(WINDOW_WIDTH,WINDOW_HEIGHT);
 	glutCreateWindow(TITLE);
 
+	if (GLEW_OK != glewInit())
+	{
+		std::cout << "no worky worky" << std::endl;
+	}
+
 	w_x = static_cast<float>(glutGet(GLUT_SCREEN_WIDTH) / 2.0f); //(WINDOW_WIDTH / 2.0f)
 	w_y = static_cast<float>(glutGet(GLUT_SCREEN_HEIGHT) / 2.0f); //WINDOW_HEIGHT / 2.0f)
 
@@ -223,6 +293,17 @@ int main(int argc, char** argv) {
     glutMotionFunc(mouse_move);
     glutPassiveMotionFunc(mouse_move);
 	glutIdleFunc(tick);
+
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
+	programID = setup_shaders();
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+
 
 	game->init();
 	glutMainLoop();	

@@ -1,10 +1,18 @@
 #pragma once
 
+#ifndef GLEW_STATIC
+#define GLEW_STATIC
+#endif
+
 #include <iostream>
 #include <string.h>
 #include <cstdlib>
 #include <stdlib.h>
 #include <windef.h>
+
+#include <Windows.h>
+#include <GL/glew.h>
+#include <GL/wglew.h>
 #include <GL/freeglut.h>
 #include <cmath>
 #include <glm/glm.hpp>
@@ -14,9 +22,9 @@
 #include <list>
 #include <iterator>
 #include <algorithm>
-#include <windows.h>
 #include <vector>
 #include <math.h>
+
 
 #define PI 3.14159265
 
