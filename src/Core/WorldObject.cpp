@@ -102,6 +102,7 @@ void WorldObject::update(float delta) {
 void WorldObject::display(float delta) {
 
 		if(model_verts.size() == 0) {
+
 			glBegin(GL_QUADS);
 				//TOP (a, b, c, d)
 				update_color(0);
@@ -127,6 +128,21 @@ void WorldObject::display(float delta) {
 				update_color(5);
 				draw_face(*bb_verts.at(3), *bb_verts.at(2), *bb_verts.at(6), *bb_verts.at(7));
 			glEnd();
+
+
+
+			/*
+			GLuint vertexbuffer;
+			glGenBuffers(1, &vertexbuffer);
+			glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * bb_verts.size(), bb_verts.data(), GL_DYNAMIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+			glVertexAttribPointer(0, 8, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glDrawArrays(GL_QUADS, 0, 8);
+			glDisableVertexAttribArray(0);
+		*/
 		}
 }
 

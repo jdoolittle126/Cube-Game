@@ -9,20 +9,6 @@
 const int	WINDOW_WIDTH = 640,
 			WINDOW_HEIGHT = 480;
 
-static const GLfloat g_vertex_buffer_data[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
-};
-
-// --- -------- --- //
-
-GLuint programID;
-GLuint vertexbuffer;
-GLuint VertexArrayID;
-
-
-
 // --- -------- --- //
 
 class Game {
@@ -165,22 +151,35 @@ class Game {
 Game* game = new Game();
 float w_x, w_y;
 
+
+static const GLfloat g_vertex_buffer_data[] = {
+   -1.0f, -1.0f, 0.0f,
+   1.0f, -1.0f, 0.0f,
+   0.0f,  1.0f, 0.0f,
+};
+
+// --- -------- --- //
+
+GLuint programID;
+GLuint vertexbuffer;
+GLuint VertexArrayID;
+
 GLuint setup_shaders() {
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	const char *vs =
-		  "#version 330 core										"
-		  "layout(location = 0) in vec3 vertexPosition_modelspace;	"
-		  "void main() {											"
-		  "	gl_Position.xyz = vertexPosition_modelspace;			"
-		  "	gl_Position.w = 1.0;									"
-		  "}														" ;
+		  "#version 330 core										\n"
+		  "layout(location = 0) in vec3 vertexPosition_modelspace;	\n"
+		  "void main() {											\n"
+		  "	gl_Position.xyz = vertexPosition_modelspace;			\n"
+		  "	gl_Position.w = 1.0;									\n"
+		  "}														\n" ;
 	const char *fs =
-		  "#version 330 core										"
-		  "out vec3 color;											"
-		  "void main() {											"
-		  "	color = vec3(1,0,0);									"
-		  "}														";
+		  "#version 330 core										\n"
+		  "out vec3 color;											\n"
+		  "void main() {											\n"
+		  "	color = vec3(1,0,0);									\n"
+		  "}														\n";
 
 	glShaderSource(VertexShaderID, 1, &vs, NULL);
 	glCompileShader(VertexShaderID);
@@ -192,6 +191,8 @@ GLuint setup_shaders() {
 	glAttachShader(ProgramID, VertexShaderID);
 	glAttachShader(ProgramID, FragmentShaderID);
 	glLinkProgram(ProgramID);
+
+
 	glDetachShader(ProgramID, VertexShaderID);
 	glDetachShader(ProgramID, FragmentShaderID);
 
@@ -209,23 +210,19 @@ void reshape(int w, int h) {
 void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(programID);
+/*
 	glEnableVertexAttribArray(0);
+	glUseProgram(programID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(
-	   0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-	   3,                  // size
-	   GL_FLOAT,           // type
-	   GL_FALSE,           // normalized?
-	   0,                  // stride
-	   (void*)0            // array buffer offset
-	);
-	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-	glDisableVertexAttribArray(0);
 
-	//game->update();
-	//game->display();
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDisableVertexAttribArray(0);
+*/
+
+	game->update();
+	game->display();
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
