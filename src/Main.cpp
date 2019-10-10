@@ -22,7 +22,7 @@ class Game {
 		float gravity = -9.81f;
 
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(0.5f, 0.0f, 0.0f, -5.0f, 90.0f, 0.0f, 0.0f);
+		Entity* test = new Entity(0.5f, 0.0f, 0.0f, -5.0f, 90.0f, 0.0f, 0.0f, "E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj");
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -151,13 +151,6 @@ class Game {
 Game* game = new Game();
 float w_x, w_y;
 
-
-static const GLfloat g_vertex_buffer_data[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
-};
-
 // --- -------- --- //
 
 GLuint programID;
@@ -209,17 +202,6 @@ void reshape(int w, int h) {
 
 void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-/*
-	glEnableVertexAttribArray(0);
-	glUseProgram(programID);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glDisableVertexAttribArray(0);
-*/
 
 	game->update();
 	game->display();
@@ -295,12 +277,6 @@ int main(int argc, char** argv) {
 	glBindVertexArray(VertexArrayID);
 
 	programID = setup_shaders();
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-
 
 	game->init();
 	glutMainLoop();	

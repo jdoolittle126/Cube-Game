@@ -79,16 +79,34 @@ void WorldObject:: update_color(int a) {
 }
 
 void WorldObject::draw_face(glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d) {
-	glVertex3f(a.x, a.y, a.z);
-	glVertex3f(b.x, b.y, b.z);
-	glVertex3f(c.x, c.y, c.z);
-	glVertex3f(d.x, d.y, d.z);
+	//glVertex3f(a.x, a.y, a.z);
+	//glVertex3f(b.x, b.y, b.z);
+	//glVertex3f(c.x, c.y, c.z);
+	//glVertex3f(d.x, d.y, d.z);
+
+	std::vector<glm::vec4> v;
+	v.push_back(a);
+	v.push_back(b);
+	v.push_back(c);
+	v.push_back(d);
+
+	GLuint vertexbuffer;
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * v.size(), &v[0], GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glDrawArrays(GL_QUADS, 0, 4);
+	glDisableVertexAttribArray(0);
+
 }
 
 void WorldObject::update_verts(){
 	mat_transform = mat_rot * mat_translate * mat_scale;
 	for(unsigned int i = 0; i < bb_verts.size(); i++) {
-		*bb_verts.at(i) = *bbverts.at(i) * mat_transform;
+		bb_verts.at(i) = bbverts.at(i) * mat_transform;
 	}
 }
 
@@ -102,47 +120,88 @@ void WorldObject::update(float delta) {
 void WorldObject::display(float delta) {
 
 		if(model_verts.size() == 0) {
-
-			glBegin(GL_QUADS);
+			//glBegin(GL_QUADS);
 				//TOP (a, b, c, d)
 				update_color(0);
-				draw_face(*bb_verts.at(0), *bb_verts.at(1), *bb_verts.at(2), *bb_verts.at(3));
+				draw_face(bb_verts.at(0), bb_verts.at(1), bb_verts.at(2), bb_verts.at(3));
 
 				//BOTTOM (e, f, g, h)
 				update_color(1);
-				draw_face(*bb_verts.at(4), *bb_verts.at(5), *bb_verts.at(6), *bb_verts.at(7));
+				draw_face(bb_verts.at(4), bb_verts.at(5), bb_verts.at(6), bb_verts.at(7));
 
 				//FRONT (a, d, h, e)
 				update_color(2);
-				draw_face(*bb_verts.at(0), *bb_verts.at(3), *bb_verts.at(7), *bb_verts.at(4));
+				draw_face(bb_verts.at(0), bb_verts.at(3), bb_verts.at(7), bb_verts.at(4));
 
 				//BACK (b, c, f, g)
 				update_color(3);
-				draw_face(*bb_verts.at(1), *bb_verts.at(2), *bb_verts.at(6), *bb_verts.at(5));
+				draw_face(bb_verts.at(1), bb_verts.at(2), bb_verts.at(6), bb_verts.at(5));
 
 				//LEFT (a, b, e, f)
 				update_color(4);
-				draw_face(*bb_verts.at(0), *bb_verts.at(1), *bb_verts.at(5), *bb_verts.at(4));
+				draw_face(bb_verts.at(0), bb_verts.at(1), bb_verts.at(5), bb_verts.at(4));
 
 				//RIGHT (d, c, h, g)
 				update_color(5);
-				draw_face(*bb_verts.at(3), *bb_verts.at(2), *bb_verts.at(6), *bb_verts.at(7));
-			glEnd();
+				draw_face(bb_verts.at(3), bb_verts.at(2), bb_verts.at(6), bb_verts.at(7));
+			//glEnd();
 
-
-
-			/*
+		} else {
 			GLuint vertexbuffer;
 			glGenBuffers(1, &vertexbuffer);
 			glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+			glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * bb_verts.size(), bb_verts.data(), GL_DYNAMIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-			glVertexAttribPointer(0, 8, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glDrawArrays(GL_QUADS, 0, 8);
+			GLuint uvbuffer;
+			glGenBuffers(1, &uvbuffer);
+			glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+			glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+			GLuint normalbuffer;
+			glGenBuffers(1, &normalbuffer);
+			glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+			glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
 			glDisableVertexAttribArray(0);
-		*/
+			glVertexAttribPointer(
+					0,                  // attribute
+					3,                  // size
+					GL_FLOAT,           // type
+					GL_FALSE,           // normalized?
+					0,                  // stride
+					(void*)0            // array buffer offset
+				);
+
+				// 2nd attribute buffer : UVs
+				glEnableVertexAttribArray(1);
+				glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+				glVertexAttribPointer(
+					1,                                // attribute
+					2,                                // size
+					GL_FLOAT,                         // type
+					GL_FALSE,                         // normalized?
+					0,                                // stride
+					(void*)0                          // array buffer offset
+				);
+
+				// 3rd attribute buffer : normals
+				glEnableVertexAttribArray(2);
+				glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+				glVertexAttribPointer(
+					2,                                // attribute
+					3,                                // size
+					GL_FLOAT,                         // type
+					GL_FALSE,                         // normalized?
+					0,                                // stride
+					(void*)0                          // array buffer offset
+				);
+
+				// Draw the triangles !
+				glDrawArrays(GL_TRIANGLES, 0, vertices.size() );
+
+				glDisableVertexAttribArray(0);
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(2);
 		}
 }
 
@@ -151,21 +210,21 @@ cubeBound WorldObject::get_bounds() {
 	bool flag = true;
 	for(auto t : bb_verts){
 		if(flag) {
-			b.x1 = t->x;
-			b.x2 = t->x;
-			b.y1 = t->y;
-			b.y2 = t->y;
-			b.z1 = t->z;
-			b.z2 = t->z;
+			b.x1 = t.x;
+			b.x2 = t.x;
+			b.y1 = t.y;
+			b.y2 = t.y;
+			b.z1 = t.z;
+			b.z2 = t.z;
 			flag = false;
 		}
 
-		if(t->x < b.x1) b.x1 = t->x;
-		else if(t->x > b.x2) b.x2 = t->x;
-		if(t->y < b.y1) b.y1 = t->y;
-		else if(t->y > b.y2) b.y2 = t->y;
-		if(t->z < b.z1) b.z1 = t->z;
-		else if(t->z > b.z2) b.z2 = t->z;
+		if(t.x < b.x1) b.x1 = t.x;
+		else if(t.x > b.x2) b.x2 = t.x;
+		if(t.y < b.y1) b.y1 = t.y;
+		else if(t.y > b.y2) b.y2 = t.y;
+		if(t.z < b.z1) b.z1 = t.z;
+		else if(t.z > b.z2) b.z2 = t.z;
 	}
 	return b;
 

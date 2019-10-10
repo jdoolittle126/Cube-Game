@@ -10,6 +10,13 @@
 #include <stdlib.h>
 #include <windef.h>
 
+#include <list>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include <math.h>
+#include <fstream>
+
 #include <Windows.h>
 #include <GL/glew.h>
 #include <GL/wglew.h>
@@ -19,11 +26,8 @@
 #include <glm/ext.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include <list>
-#include <iterator>
-#include <algorithm>
-#include <vector>
-#include <math.h>
+
+
 
 
 #define PI 3.14159265

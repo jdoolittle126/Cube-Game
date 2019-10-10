@@ -2,6 +2,7 @@
 
 #include "../Core/GameObject.h"
 #include "../Core/Libraries.h"
+#include "../Utils/OBJ_Loader.h"
 
 struct cubeBound {
 	float 	x1, x2,
@@ -22,9 +23,11 @@ public:
 				pos_yaw,
 				pos_roll;
 
-	std::vector<glm::vec4*> bbverts;
-	std::vector<glm::vec4*> bb_verts;
-	std::vector<glm::vec4*> model_verts;
+	std::vector<glm::vec4> bbverts;
+	std::vector<glm::vec4> bb_verts;
+	std::vector<glm::vec4> model_verts;
+	std::vector<glm::vec4> model_uvs;
+	std::vector<glm::vec4> model_normals;
 
 	glm::mat4x4 mat_transform,
 				_mat_transform,
@@ -32,7 +35,7 @@ public:
 				mat_scale,
 				mat_rot;
 
-	WorldObject(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
+	void build(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
 		size = i_size / 2.0f;
 		pos_x = i_x;
 		pos_y = i_y;
@@ -41,26 +44,59 @@ public:
 		pos_pitch = i_pitch;
 		pos_roll = i_roll;
 
-		bbverts.push_back(new glm::vec4(-size, size, size, 1.0f));
-		bbverts.push_back(new glm::vec4(-size, size, -size, 1.0f));
-		bbverts.push_back(new glm::vec4(size, size, -size, 1.0f));
-		bbverts.push_back(new glm::vec4(size, size, size, 1.0f));
-		bbverts.push_back(new glm::vec4(-size, -size, size, 1.0f));
-		bbverts.push_back(new glm::vec4(-size, -size, -size, 1.0f));
-		bbverts.push_back(new glm::vec4(size, -size, -size, 1.0f));
-		bbverts.push_back(new glm::vec4(size, -size, size, 1.0f));
+		bbverts.push_back(glm::vec4(-size, size, size, 1.0f));
+		bbverts.push_back(glm::vec4(-size, size, -size, 1.0f));
+		bbverts.push_back(glm::vec4(size, size, -size, 1.0f));
+		bbverts.push_back(glm::vec4(size, size, size, 1.0f));
+		bbverts.push_back(glm::vec4(-size, -size, size, 1.0f));
+		bbverts.push_back(glm::vec4(-size, -size, -size, 1.0f));
+		bbverts.push_back(glm::vec4(size, -size, -size, 1.0f));
+		bbverts.push_back(glm::vec4(size, -size, size, 1.0f));
 
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-		bb_verts.push_back(new glm::vec4);
-
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
+	WorldObject(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
+		build(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll);
+	}
+
+	WorldObject(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll, const char* path){
+		build(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll);
+		std::vector<glm::vec3> _v, _n;
+		std::vector<glm::vec2> _u;
+		std::cout << path << std::endl;
+		objl::Loader Loader;
+		bool loadout = Loader.LoadFile(path);
+
+		for (int i = 0; i < Loader.LoadedMeshes.size(); i++)
+		{
+			objl::Mesh curMesh = Loader.LoadedMeshes[i];
+			for (int j = 0; j < curMesh.Vertices.size(); j++)
+			{
+				model_verts.push_back(glm::vec4(curMesh.Vertices[j].Position.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z, 1.0f));
+				//FIX UV AND FIX DRAW (Using example, needs to be updated to match)
+				model_uvs.push_back(glm::vec4(curMesh.Vertices[j].N.X, curMesh.Vertices[j].Position.Y, curMesh.Vertices[j].Position.Z, 1.0f));
+				model_normals.push_back(glm::vec4(curMesh.Vertices[j].Normal.X, curMesh.Vertices[j].Normal.Y, curMesh.Vertices[j].Normal.Z, 1.0f));
+
+			}
+		}
+
+		if(loadout) {
+			std::cout << "Success" << std::endl;
+		} else {
+			std::cout << "Fail" << std::endl;
+		}
+
+
+
+	}
 
 	void update(float delta);
 	void display(float delta);

@@ -46,6 +46,24 @@ class Entity : public WorldObject {
 			accel_pitch = 0.0f;
 			accel_roll = 0.0f;
 		}
+
+		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll, const char * path)
+		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll, path)
+		{
+			vel_x = 0.0f;
+			vel_y = 0.0f;
+			vel_z = 0.0f;
+			vel_yaw = 0.0f;
+			vel_pitch = 0.0f;
+			vel_roll = 0.0f;
+			accel_x = 0.0f;
+			accel_y = -9.81f;
+			accel_z = 0.0f;
+			accel_yaw = 0.0f;
+			accel_pitch = 0.0f;
+			accel_roll = 0.0f;
+		}
+
 		void update(float delta);
 		void display(float delta);
 		void set_world_map(WorldMap* m){

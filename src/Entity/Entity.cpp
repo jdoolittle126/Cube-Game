@@ -146,9 +146,9 @@ void Entity::pos_update(float delta) {
 }
 
 bool Entity::does_collide(){
-	for(auto &p : bb_verts) {
-		for(auto &b : map->get_world_bounds()) {
-			if((p->x >= b.x1 && p->x <= b.x2)&&(p->y >= b.y1 && p->y <= b.y2)&&(p->z >= b.z1 && p->z <= b.z2)) return true;
+	for(auto p : bb_verts) {
+		for(auto b : map->get_world_bounds()) {
+			if((p.x >= b.x1 && p.x <= b.x2)&&(p.y >= b.y1 && p.y <= b.y2)&&(p.z >= b.z1 && p.z <= b.z2)) return true;
 		}
 	}
 	return false;
