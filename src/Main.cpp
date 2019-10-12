@@ -167,9 +167,10 @@ GLuint setup_shaders() {
 	const char *vs =
 			"#version 330 core										\n"
 			"layout(location = 0) in vec4 pos_model;				\n"
-			"layout(location = 1) in vec4 pos_tex					\n"
-			"layout(location = 2) in vec4 pos_normal				\n"
-			"uniform mat4 model_view														\n"
+			"layout(location = 1) in vec4 pos_tex;					\n"
+			"layout(location = 2) in vec4 pos_normal;				\n"
+			"uniform mat4 mat_model_view;							\n"
+			"uniform mat4 mat_normal								\n"
 			"out 													\n"
 			"out vec3 normal;										\n"
 			"void main() {											\n"
