@@ -159,41 +159,41 @@ void Entity::check_collide() {
 		has_accel_x = has_accel_y = has_accel_z = has_accel_pitch = has_accel_yaw = has_accel_roll = true;
 
 		build_rot(pos_pitch, _pos_yaw, _pos_roll);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_pitch = _pos_pitch;
 			has_accel_pitch = false;
 		}
 
 		build_rot(_pos_pitch, pos_yaw, _pos_roll);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_yaw = _pos_yaw;
 			has_accel_yaw = false;
 		}
 
 		build_rot(_pos_pitch, _pos_yaw, pos_roll);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_roll = _pos_roll;
 			has_accel_roll = false;
 		}
 
 		build_translate(pos_x, _pos_y, _pos_z);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_x = _pos_x;
 			has_accel_x = false;
 		}
 		build_translate(_pos_x, pos_y, _pos_z);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_y = _pos_y;
 			has_accel_y = false;
 		}
 
 		build_translate(_pos_x, _pos_y, pos_z);
-		update_verts();
+		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_z = _pos_z;
 			has_accel_z = false;
@@ -207,8 +207,7 @@ void Entity::update(float delta) {
 
 	check_collide();
 
-	build_translate(pos_x, pos_y, pos_z);
-	update_verts();
+	WorldObject::update(delta);
 
 }
 

@@ -70,6 +70,8 @@ class Game {
 			if(up) {
 				//gluLookAt(cam_x, cam_y, cam_z, cam_focus_x, cam_focus_y, cam_focus_z, cam_yaw, cam_pitch, cam_roll);
 				switch(key){
+					case '1': test->set_vel_y(-3.0f); break;
+					case '2': test->set_vel_y(3.0f); break;
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
@@ -83,6 +85,8 @@ class Game {
 				}
 			} else {
 				switch(key){
+					case '1': test->set_vel_y(0.0f); break;
+					case '2': test->set_vel_y(0.0f); break;
 					case 'a': test->set_vel_x(0.0f); break;
 					case 'd': test->set_vel_x(0.0f); break;
 					case 's': test->set_vel_z(0.0f); break;
@@ -161,18 +165,24 @@ GLuint setup_shaders() {
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	const char *vs =
-		  "#version 330 core										\n"
-		  "layout(location = 0) in vec3 vertexPosition_modelspace;	\n"
-		  "void main() {											\n"
-		  "	gl_Position.xyz = vertexPosition_modelspace;			\n"
-		  "	gl_Position.w = 1.0;									\n"
-		  "}														\n" ;
+			"#version 330 core										\n"
+			"layout(location = 0) in vec4 pos_model;				\n"
+			"layout(location = 1) in vec4 pos_tex					\n"
+			"layout(location = 2) in vec4 pos_normal				\n"
+			"uniform mat4 model_view														\n"
+			"out 													\n"
+			"out vec3 normal;										\n"
+			"void main() {											\n"
+			"	gl_Position.xyzw = pos_model						\n"
+			"	fragmentColor = vertexColor;						\n"
+			"}														\n" ;
 	const char *fs =
-		  "#version 330 core										\n"
-		  "out vec3 color;											\n"
-		  "void main() {											\n"
-		  "	color = vec3(1,0,0);									\n"
-		  "}														\n";
+			"#version 330 core										\n"
+			"in vec3 fragmentColor;									\n"
+			"out vec3 color;										\n"
+			"void main() {											\n"
+			"	color = fragmentColor;								\n"
+			"}														\n";
 
 	glShaderSource(VertexShaderID, 1, &vs, NULL);
 	glCompileShader(VertexShaderID);
