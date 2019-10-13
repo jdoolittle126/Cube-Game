@@ -200,18 +200,18 @@ void Entity::check_collide() {
 		}
 }
 
-void Entity::update(float delta) {
+void Entity::update(float delta, GLuint programID) {
 
 	pos_update(delta);
 	build_scale(scale_x, scale_y, scale_z);
 
 	check_collide();
 
-	WorldObject::update(delta);
+	WorldObject::update(delta, programID);
 
 }
 
-void Entity::display(float delta) {
-			WorldObject::display(delta);
+void Entity::display(float delta, GLuint programID) {
+			WorldObject::display(delta, programID);
 
 }

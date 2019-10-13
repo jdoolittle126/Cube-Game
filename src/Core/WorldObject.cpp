@@ -78,42 +78,17 @@ void WorldObject:: update_color(int a) {
 	glColor3f(colors[a][0], colors[a][1], colors[a][2]);
 }
 
-void WorldObject::draw_face_quad(glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d) {
-	std::vector<glm::vec4> v;
-	v.push_back(a);
-	v.push_back(b);
-	v.push_back(c);
-	v.push_back(d);
 
-	GLuint vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+void WorldObject::draw_face_quad(glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d, GLuint programID) {
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * v.size(), &v[0], GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glDrawArrays(GL_QUADS, 0, 4);
-	glDisableVertexAttribArray(0);
-}
-
-void WorldObject::draw_face_tri(glm::vec4 a, glm::vec4 b, glm::vec4 c) {
-	std::vector<glm::vec4> v;
-	v.push_back(a);
-	v.push_back(b);
-	v.push_back(c);
-
-	GLuint vertexbuffer, normalbuffer;
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * v.size(), &v[0], GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glDrawArrays(GL_QUADS, 0, 3);
-	glDisableVertexAttribArray(0);
-
+	testing.push_back(a);
+	testing.push_back(b);
+	testing.push_back(c);
+	testing.push_back(d);
 
 }
+
+
 
 void WorldObject::update_verts(std::vector<glm::vec4> &_v, std::vector<glm::vec4> &v){
 	mat_transform = mat_rot * mat_translate * mat_scale;
@@ -122,85 +97,79 @@ void WorldObject::update_verts(std::vector<glm::vec4> &_v, std::vector<glm::vec4
 	}
 }
 
-void WorldObject::update(float delta) {
+void WorldObject::update(float delta, GLuint programID) {
 	build_translate(pos_x, pos_y, pos_z);
 	build_rot(pos_pitch, pos_yaw, pos_roll);
 	build_scale(scale_x, scale_y, scale_z);
-	if(model_verts.size() > 0){
-		update_verts(_model_verts, model_verts);
-	} else {
-		update_verts(bb_verts, bbverts);
-	}
+	mat_transform = mat_rot * mat_translate * mat_scale;
+	update_verts(bb_verts, bbverts);
 
 }
 
-void WorldObject::display(float delta) {
+void WorldObject::display(float delta, GLuint programID) {
 
-		if(model_verts.size() == 0) {
-			//glBegin(GL_QUADS);
-				//TOP (a, b, c, d)
-				update_color(0);
-				draw_face_quad(bb_verts.at(0), bb_verts.at(1), bb_verts.at(2), bb_verts.at(3));
+		if(!use_model) {
+			//TOP (a, b, c, d)
+			update_color(0);
+			draw_face_quad(bb_verts.at(0), bb_verts.at(1), bb_verts.at(2), bb_verts.at(3), programID);
 
-				//BOTTOM (e, f, g, h)
-				update_color(1);
-				draw_face_quad(bb_verts.at(4), bb_verts.at(5), bb_verts.at(6), bb_verts.at(7));
+			//BOTTOM (e, f, g, h)
+			update_color(1);
+			draw_face_quad(bb_verts.at(4), bb_verts.at(5), bb_verts.at(6), bb_verts.at(7), programID);
 
-				//FRONT (a, d, h, e)
-				update_color(2);
-				draw_face_quad(bb_verts.at(0), bb_verts.at(3), bb_verts.at(7), bb_verts.at(4));
+			//FRONT (a, d, h, e)
+			update_color(2);
+			draw_face_quad(bb_verts.at(0), bb_verts.at(3), bb_verts.at(7), bb_verts.at(4), programID);
 
-				//BACK (b, c, f, g)
-				update_color(3);
-				draw_face_quad(bb_verts.at(1), bb_verts.at(2), bb_verts.at(6), bb_verts.at(5));
+			//BACK (b, c, f, g)
+			update_color(3);
+			draw_face_quad(bb_verts.at(1), bb_verts.at(2), bb_verts.at(6), bb_verts.at(5), programID);
 
-				//LEFT (a, b, e, f)
-				update_color(4);
-				draw_face_quad(bb_verts.at(0), bb_verts.at(1), bb_verts.at(5), bb_verts.at(4));
+			//LEFT (a, b, e, f)
+			update_color(4);
+			draw_face_quad(bb_verts.at(0), bb_verts.at(1), bb_verts.at(5), bb_verts.at(4), programID);
 
-				//RIGHT (d, c, h, g)
-				update_color(5);
-				draw_face_quad(bb_verts.at(3), bb_verts.at(2), bb_verts.at(6), bb_verts.at(7));
-			//glEnd();
+			//RIGHT (d, c, h, g)
+			update_color(5);
+			draw_face_quad(bb_verts.at(3), bb_verts.at(2), bb_verts.at(6), bb_verts.at(7), programID);
+
+
+			GLuint vaoId;
+			glGenVertexArrays(1, &vaoId);
+			glBindVertexArray(vaoId);
+
+			GLuint posAttributePosition = glGetAttribLocation(programID, "pos_model");
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * testing.size(), &testing[0], GL_STATIC_DRAW);
+			glVertexAttribPointer(posAttributePosition, 4, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+			glEnableVertexAttribArray(posAttributePosition);
+
+			//glDrawArrays(GL_QUADS, 0, 4);
+
+			glDisableVertexAttribArray(posAttributePosition);
+			testing.clear();
+
 
 		} else {
+			GLuint posAttributePosition = glGetAttribLocation(programID, "pos_model");
+			GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 
-		update_color(2);
+			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 
-		GLfloat g_vertex_buffer_data[_model_verts.size() * 3];
+			//GLuint vaoId;
+			//glGenVertexArrays(1, &vaoId);
+			//glBindVertexArray(vaoId);
+			glEnableVertexAttribArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, model->id);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			//glVertexAttribPointer(posAttributePosition, 4, GL_FLOAT, false, 0, 0);
 
-		for(unsigned int i = 0; i < _model_verts.size(); i++){
-			 g_vertex_buffer_data[i*3] = _model_verts.at(i).x;
-			 g_vertex_buffer_data[i*3+1] = _model_verts.at(i).y;
-			 g_vertex_buffer_data[i*3+2] = _model_verts.at(i).z;
-		}
 
-		//Vertex buffer
-		GLuint vertexbuffer;
-		glGenBuffers(1, &vertexbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-
-		    //vertex buffer
-		    glVertexAttribPointer(
-		        0,          //index
-		        3,          //size
-		        GL_FLOAT,   //type
-		        GL_FALSE,   //normalized?
-		        0,          //stride
-		        0           //array buffer offset
-		    );
-
-		    //draw triangle
-		    glDrawArrays(GL_TRIANGLES, 0, model_verts.size() * 3);
-
-		    glDisableVertexAttribArray(0);
-
+			glDrawArrays(GL_TRIANGLES, 0, 3*(model->model_verts.size()));
+			//glDisableVertexAttribArray(posAttributePosition);
+			glDisableVertexAttribArray(0);
 
 		}
+
 }
 
 cubeBound WorldObject::get_bounds() {

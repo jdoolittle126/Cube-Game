@@ -13,8 +13,8 @@ class WorldMap {
 		}
 
 
-	void update(float delta);
-	void display(float delta);
+	void update(float delta, GLuint programID);
+	void display(float delta, GLuint programID);
 	void create_tile(float x, float y, float z);
 	void destroy_tile(float x, float y, float z);
 	std::vector<cubeBound> get_world_bounds();

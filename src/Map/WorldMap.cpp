@@ -2,15 +2,15 @@
 #include "MapTile.h"
 #include "../Core/Libraries.h"
 
-void WorldMap::update(float delta) {
+void WorldMap::update(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-	    tile->update(delta);
+	    tile->update(delta, programID);
 	}
 }
 
-void WorldMap::display(float delta) {
+void WorldMap::display(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-	    tile->display(delta);
+	    tile->display(delta, programID);
 	}
 }
 

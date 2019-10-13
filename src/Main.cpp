@@ -1,6 +1,10 @@
 #include "Entity/Entity.h"
 #include "Map/WorldMap.h"
+#include "Core/Model.h"
+#include "Core/Camera.h"
 #include <iostream>
+#include <fstream>
+#include <string>
 
 #define TITLE "hehe"
 
@@ -10,6 +14,11 @@ const int	WINDOW_WIDTH = 640,
 			WINDOW_HEIGHT = 480;
 
 // --- -------- --- //
+
+
+GLuint programID;
+
+float x = 0.0f, y = 2.0f, z = 1.0f;
 
 class Game {
 	private:
@@ -21,8 +30,9 @@ class Game {
 		float m_x = 0, m_y = 0, _m_x, _m_y;
 		float gravity = -9.81f;
 
+		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(0.5f, 0.0f, 0.0f, -5.0f, 90.0f, 0.0f, 0.0f, "E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj");
+		Entity* test = new Entity(1.0f, 0.0f, -2.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")); //
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -46,32 +56,42 @@ class Game {
 		void update() {
 			update_delta();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			map->update(delta);
+			map->update(delta, programID);
 			for(auto &obj : object_list) {
-			    obj->update(delta);
+			    obj->update(delta, programID);
 			}
 		}
 
 		void display() {
-			map->display(delta);
+			GLuint proj = glGetUniformLocation(programID, "mat_projection");
+			GLuint view = glGetUniformLocation(programID, "mat_view");
+
+			glUniformMatrix4fv(proj, 1, GL_FALSE, &camera->projection[0][0]);
+			glUniformMatrix4fv(view, 1, GL_FALSE, &camera->view[0][0]);
+
+			map->display(delta, programID);
 			for(auto &obj : object_list) {
-			    obj->display(delta);
+			    obj->display(delta, programID);
 			}
 		}
 
 		void build_map() {
+			map->create_tile(0.0f, 0.0f, 0.0f);
+
+			/*
 			for(int i = 0; i < 5; i++){
 				map->create_tile(i, -2.0f+i, -5.0f-i);
 				map->create_tile(-i, -2.0f+i, -5.0f-i);
 			}
+			*/
 		}
 
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
 				//gluLookAt(cam_x, cam_y, cam_z, cam_focus_x, cam_focus_y, cam_focus_z, cam_yaw, cam_pitch, cam_roll);
 				switch(key){
-					case '1': test->set_vel_y(-3.0f); break;
-					case '2': test->set_vel_y(3.0f); break;
+					case '1': camera->translate(0, 0, -10.0f); break;
+					//case '2':
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
@@ -85,8 +105,6 @@ class Game {
 				}
 			} else {
 				switch(key){
-					case '1': test->set_vel_y(0.0f); break;
-					case '2': test->set_vel_y(0.0f); break;
 					case 'a': test->set_vel_x(0.0f); break;
 					case 'd': test->set_vel_x(0.0f); break;
 					case 's': test->set_vel_z(0.0f); break;
@@ -116,26 +134,13 @@ class Game {
 		}
 
 		void mouse_move(int x, int y) {
-			/*
-			if(dragging) {
-				cam_focus_x += (x - _m_x)*0.0001f;
-				cam_focus_y += (y - _m_y)*-0.0001f;
-			    _m_x = x;
-			    _m_y = y;
-			} else {
-				cam_focus_x = 0;
-				cam_focus_y = 0;
-			}
-			*/
+
 		}
 
 		void reshape(GLsizei width, GLsizei height) {
 			if (height == 0) height++;
-			GLfloat aspect = (GLfloat) width / (GLfloat) height;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glViewport(0, 0, width, height);
-			gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+			camera->reshape((GLfloat) width, (GLfloat) height);
+
 		}
 
 		void keyboard(){
@@ -150,40 +155,37 @@ class Game {
 
 };
 
-
-
-Game* game = new Game();
+Game* game;
 float w_x, w_y;
 
 // --- -------- --- //
 
-GLuint programID;
-GLuint vertexbuffer;
-GLuint VertexArrayID;
-
 GLuint setup_shaders() {
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	const char *vs =
-			"#version 330 core										\n"
-			"layout(location = 0) in vec4 pos_model;				\n"
-			"layout(location = 1) in vec4 pos_tex;					\n"
-			"layout(location = 2) in vec4 pos_normal;				\n"
-			"uniform mat4 mat_model_view;							\n"
-			"uniform mat4 mat_normal								\n"
-			"out 													\n"
-			"out vec3 normal;										\n"
-			"void main() {											\n"
-			"	gl_Position.xyzw = pos_model						\n"
-			"	fragmentColor = vertexColor;						\n"
-			"}														\n" ;
-	const char *fs =
-			"#version 330 core										\n"
-			"in vec3 fragmentColor;									\n"
-			"out vec3 color;										\n"
-			"void main() {											\n"
-			"	color = fragmentColor;								\n"
-			"}														\n";
+
+	std::ifstream stream;
+	stream.open("src/GLSL/Shaders/Vertex/shader.vertex", std::ios::in);
+	std::string line = "", content_vert, content_frag;
+
+	while(!stream.eof()) {
+		std::getline(stream, line);
+		content_vert.append(line + "\n");
+	}
+
+	stream.close();
+
+	stream.open("src/GLSL/Shaders/Fragment/shader.fragment", std::ios::in);
+
+	while(!stream.eof()) {
+		std::getline(stream, line);
+		content_frag.append(line + "\n");
+	}
+
+	stream.close();
+
+    const char *vs = content_vert.c_str();
+    const char *fs = content_frag.c_str();
 
 	glShaderSource(VertexShaderID, 1, &vs, NULL);
 	glCompileShader(VertexShaderID);
@@ -213,7 +215,7 @@ void reshape(int w, int h) {
 
 void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	glUseProgram(programID);
 	game->update();
 	game->display();
 	glutSwapBuffers();
@@ -283,12 +285,8 @@ int main(int argc, char** argv) {
     glutMotionFunc(mouse_move);
     glutPassiveMotionFunc(mouse_move);
 	glutIdleFunc(tick);
-
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
-
 	programID = setup_shaders();
-
+	game = new Game();
 	game->init();
 	glutMainLoop();	
 	return 0;
