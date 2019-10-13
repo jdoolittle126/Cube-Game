@@ -24,7 +24,7 @@ public:
 				pos_yaw,
 				pos_roll;
 
-	std::vector<glm::vec4> bbverts, bb_verts;
+	std::vector<glm::vec3> bbverts, bb_verts, tri_verts;
 
 	glm::mat4x4 mat_transform,
 				_mat_transform,
@@ -32,10 +32,8 @@ public:
 				mat_scale,
 				mat_rot;
 
-	std::vector<glm::vec4> testing;
-
 	Model* model;
-	bool use_model = false;
+	bool use_model = false, draw_bb = false;
 	bool test = true;
 
 	void build(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
@@ -48,23 +46,23 @@ public:
 		pos_pitch = i_pitch;
 		pos_roll = i_roll;
 
-		bbverts.push_back(glm::vec4(-size, size, size, 1.0f));
-		bbverts.push_back(glm::vec4(-size, size, -size, 1.0f));
-		bbverts.push_back(glm::vec4(size, size, -size, 1.0f));
-		bbverts.push_back(glm::vec4(size, size, size, 1.0f));
-		bbverts.push_back(glm::vec4(-size, -size, size, 1.0f));
-		bbverts.push_back(glm::vec4(-size, -size, -size, 1.0f));
-		bbverts.push_back(glm::vec4(size, -size, -size, 1.0f));
-		bbverts.push_back(glm::vec4(size, -size, size, 1.0f));
+		bbverts.push_back(glm::vec3(-size, size, size));
+		bbverts.push_back(glm::vec3(-size, size, -size));
+		bbverts.push_back(glm::vec3(size, size, -size));
+		bbverts.push_back(glm::vec3(size, size, size));
+		bbverts.push_back(glm::vec3(-size, -size, size));
+		bbverts.push_back(glm::vec3(-size, -size, -size));
+		bbverts.push_back(glm::vec3(size, -size, -size));
+		bbverts.push_back(glm::vec3(size, -size, size));
 
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		bb_verts.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
 	WorldObject(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
@@ -80,7 +78,7 @@ public:
 
 	void update(float delta, GLuint programID);
 	void display(float delta, GLuint programID);
-	void update_verts(std::vector<glm::vec4> &_v, std::vector<glm::vec4> &v);
+	void update_verts(std::vector<glm::vec3> &_v, std::vector<glm::vec3> &v);
 	float get_pos_x();
 	float get_pos_y();
 	float get_pos_z();
@@ -97,6 +95,6 @@ public:
 	void build_scale(float sx, float sy, float sz);
 	void build_rot(float _rx, float _ry, float _rz);
 	void update_color(int a);
-	void draw_face_quad(glm::vec4 a, glm::vec4 b, glm::vec4 c, glm::vec4 d, GLuint programID);
+	void draw_face_quad(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d);
 	cubeBound get_bounds();
 };

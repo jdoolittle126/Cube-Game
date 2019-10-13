@@ -32,7 +32,7 @@ class Game {
 
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(1.0f, 0.0f, -2.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")); //
+		Entity* test = new Entity(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")); //new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -63,9 +63,12 @@ class Game {
 		}
 
 		void display() {
+
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			GLuint proj = glGetUniformLocation(programID, "mat_projection");
 			GLuint view = glGetUniformLocation(programID, "mat_view");
-
+			//std::cout << glm::to_string(camera->projection) << "\n";
 			glUniformMatrix4fv(proj, 1, GL_FALSE, &camera->projection[0][0]);
 			glUniformMatrix4fv(view, 1, GL_FALSE, &camera->view[0][0]);
 
@@ -76,28 +79,26 @@ class Game {
 		}
 
 		void build_map() {
-			map->create_tile(0.0f, 0.0f, 0.0f);
 
-			/*
 			for(int i = 0; i < 5; i++){
 				map->create_tile(i, -2.0f+i, -5.0f-i);
 				map->create_tile(-i, -2.0f+i, -5.0f-i);
 			}
-			*/
+
 		}
 
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
 				//gluLookAt(cam_x, cam_y, cam_z, cam_focus_x, cam_focus_y, cam_focus_z, cam_yaw, cam_pitch, cam_roll);
 				switch(key){
-					case '1': camera->translate(0, 0, -10.0f); break;
-					//case '2':
+					case '1': camera->translate(0, 0, -0.5f); break;
+					case '2': camera->translate(0, 0, 0.5f); break;
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
 					case 'w': test->set_vel_z(-3.0f); break;
-					case 'q': test->set_vel_yaw(-45.0f); break;
-					case 'e': test->set_vel_yaw(45.0f); break;
+					case 'q': test->set_vel_yaw(-5.0f); break;
+					case 'e': test->set_vel_yaw(5.0f); break;
 					case 'r': test->allow_accels(true); break;
 					case 'o': build_map();break;
 					case 32: test->set_vel_y(5.0f); break;

@@ -1,18 +1,15 @@
 #version 330 core		
 				
-layout(location = 0) in vec4 pos_model;		
+layout(location = 0) in vec3 pos_model;	
+layout(location = 1) in vec3 pos_normal;	
+	
 uniform mat4 mat_model_view;	
 uniform mat4 mat_projection;
-uniform mat4 mat_view;		
-										
+uniform mat4 mat_view;	
+								
 void main() {				
 
-	mat4 M = mat4(
-    	vec4(1.0, 0.0, 0.0, 0.0),
-   		vec4(0.0, 1.0, 0.0, 0.0),
-   		vec4(0.0, 0.0, 1.0, 0.0),
-    	vec4(0.0, 0.0, 0.0, 1.0)
-    );
-	mat4 MVP = 	mat_projection * mat_view * mat_model_view;			
-    gl_Position = mat_model_view * pos_model;					
+
+	mat4 MVP = 	mat_projection * mat_view * mat_model_view;	
+    gl_Position =  MVP * vec4(pos_model, 1);	
 }	

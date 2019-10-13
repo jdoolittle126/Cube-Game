@@ -13,9 +13,9 @@ public:
 	}
 
 	void init(float width, float height) {
-		projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
-		cam_pos = glm::vec3(0,0,0);
-		cam_look = glm::vec3(0,0,1);
+		projection = glm::perspective(glm::radians(45.0f), float(width) / float(height), 0.1f, 100.0f);//glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
+		cam_pos = glm::vec3(0,0,1);
+		cam_look = glm::vec3(0,0,0);
 		cam_head = glm::vec3(0,1,0);
 		update_view();
 	}
@@ -28,7 +28,7 @@ public:
 	}
 
 	void reshape(float width, float height){
-		projection = glm::perspective(glm::radians(45.0f), width / height, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 	}
 
 	void set_pos(float x, float y, float z) {
@@ -40,11 +40,11 @@ public:
 		update_view();
 	}
 	void translate(float x, float y, float z) {
-		cam_pos *= glm::vec3(x,y,z);
+		cam_pos = cam_pos + glm::vec3(x, y, z);
 		update_view();
 	}
-	void translate(glm::vec3 translate) {
-		cam_pos *= translate;
+	void translate(glm::vec3 move) {
+		cam_pos = cam_pos + move;
 		update_view();
 	}
 	void look_at(float x, float y, float z) {
