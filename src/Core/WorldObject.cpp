@@ -162,10 +162,10 @@ void WorldObject::display(float delta, GLuint programID) {
 			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 			glEnableVertexAttribArray(0);
 			glBindBuffer(GL_ARRAY_BUFFER, model->vboId);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->eboId);
+			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->eboId);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			//glDrawArrays(GL_TRIANGLES, 0, 3*(model->model_verts.size()));
-			glDrawElements(GL_TRIANGLES, model->model_indices.size(), GL_UNSIGNED_INT, (void*)0);
+			glDrawArrays(GL_TRIANGLES, 0, 3*(model->model_verts.size()));
+			//glDrawElements(GL_TRIANGLES, model->model_indices.size(), GL_UNSIGNED_INT, (void*)0);
 			glDisableVertexAttribArray(0);
 
 		}

@@ -32,7 +32,7 @@ class Game {
 
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")); //new Model("E:\\Workspaces\\eclipse-workspace-cpp\\Cube Game\\src\\Assets\\Models\\squid.obj")
+		Entity* test = new Entity(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj"));
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -64,8 +64,8 @@ class Game {
 
 		void display() {
 
-			//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			GLuint proj = glGetUniformLocation(programID, "mat_projection");
 			GLuint view = glGetUniformLocation(programID, "mat_view");
 			//std::cout << glm::to_string(camera->projection) << "\n";
@@ -198,7 +198,6 @@ GLuint setup_shaders() {
 	glAttachShader(ProgramID, VertexShaderID);
 	glAttachShader(ProgramID, FragmentShaderID);
 	glLinkProgram(ProgramID);
-
 
 	glDetachShader(ProgramID, VertexShaderID);
 	glDetachShader(ProgramID, FragmentShaderID);
