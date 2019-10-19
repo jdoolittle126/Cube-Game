@@ -84,12 +84,12 @@ void WorldObject:: update_color(int a) {
 
 
 void WorldObject::draw_face_quad(glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d) {
-	tri_verts.push_back(a);
-	tri_verts.push_back(b);
-	tri_verts.push_back(c);
-	tri_verts.push_back(c);
-	tri_verts.push_back(d);
-	tri_verts.push_back(a);
+	//tri_verts.push_back(a);
+	//tri_verts.push_back(b);
+	//tri_verts.push_back(c);
+	//tri_verts.push_back(c);
+	//tri_verts.push_back(d);
+	//tri_verts.push_back(a);
 }
 
 
@@ -111,6 +111,9 @@ void WorldObject::update(float delta, GLuint programID) {
 }
 
 void WorldObject::display(float delta, GLuint programID) {
+
+		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
+		glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 
 		if((use_model && draw_bb) || !use_model) {
 			//TOP (a, b, c, d)
@@ -141,34 +144,25 @@ void WorldObject::display(float delta, GLuint programID) {
 			glm::mat4 _mat_transform = mat_translate * mat_scale;
 			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &_mat_transform[0][0]);
 
-		    GLuint vboId;
+		    glBindBuffer(GL_ARRAY_BUFFER, debug_vboId);
+		    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debug_eboId);
 
-		    glGenBuffers(1, &vboId);
-		    glBindBuffer(GL_ARRAY_BUFFER, vboId);
-		    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*tri_verts.size(), &tri_verts[0], GL_STATIC_DRAW);
-		    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		    glEnableVertexAttribArray(0);
-		    glBindBuffer(GL_ARRAY_BUFFER, vboId);
-		    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		    glDrawArrays(GL_TRIANGLES, 0, 3*tri_verts.size());
-		    glDisableVertexAttribArray(0);
-
-		    tri_verts.clear();
-
-		}
-		if(use_model) {
-			GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
-			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, model->vboId);
-			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->eboId);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glDrawArrays(GL_TRIANGLES, 0, 3*(model->model_verts.size()));
-			//glDrawElements(GL_TRIANGLES, model->model_indices.size(), GL_UNSIGNED_INT, (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			glDisableVertexAttribArray(0);
 
+		} else {
+			glBindBuffer(GL_ARRAY_BUFFER, model->vboId);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model->eboId);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+			glDrawElements(GL_TRIANGLES, model->model_indices.size(), GL_UNSIGNED_INT, 0);
+			glDisableVertexAttribArray(0);
 		}
+
 
 }
 

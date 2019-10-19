@@ -24,7 +24,9 @@ public:
 				pos_yaw,
 				pos_roll;
 
-	std::vector<glm::vec3> bbverts, bb_verts, tri_verts;
+	std::vector<glm::vec3> bbverts, bb_verts;
+
+	GLuint debug_vboId, debug_eboId;
 
 	glm::mat4x4 mat_transform,
 				_mat_transform,
@@ -65,8 +67,31 @@ public:
 		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
+	void build_debug(){
+		glGenBuffers(1, &debug_vboId);
+	    glBindBuffer(GL_ARRAY_BUFFER, debug_vboId);
+	    glBufferData(GL_ARRAY_BUFFER, bbverts.size() * sizeof(glm::vec3), &bbverts[0], GL_STATIC_DRAW);
+	    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	    GLuint debug_indices[] = {
+	    		0,1,2,2,3,0,
+	    		4,5,6,6,7,4,
+	    		0,3,7,7,4,0,
+	    		1,2,6,6,5,1,
+	    		0,1,5,5,4,0,
+	    		3,2,6,6,7,3
+
+	    };
+
+	    glGenBuffers(1, &debug_eboId);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debug_eboId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned int), &debug_indices[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
 	WorldObject(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll){
 		build(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll);
+		build_debug();
 		use_model = false;
 	}
 

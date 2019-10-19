@@ -19,6 +19,7 @@ public:
 		create_data_buffer(path);
 		vboId = build_vbo();
 		eboId = build_ebo();
+
 	}
 
 };

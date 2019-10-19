@@ -18,8 +18,6 @@ const int	WINDOW_WIDTH = 640,
 
 GLuint programID;
 
-float x = 0.0f, y = 2.0f, z = 1.0f;
-
 class Game {
 	private:
 		float delta, ts, _ts;
@@ -32,7 +30,7 @@ class Game {
 
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj"));
+		Entity* test = new Entity(1.0f, 0.0f, 1.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj"));
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -63,7 +61,8 @@ class Game {
 		}
 
 		void display() {
-
+			camera->set_pos(test->pos_x, test->pos_y+2.0f, test->pos_z+4.0f);
+			camera->look_at(test->pos_x, test->pos_y, test->pos_z);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			GLuint proj = glGetUniformLocation(programID, "mat_projection");
@@ -79,20 +78,19 @@ class Game {
 		}
 
 		void build_map() {
-
-			for(int i = 0; i < 5; i++){
-				map->create_tile(i, -2.0f+i, -5.0f-i);
-				map->create_tile(-i, -2.0f+i, -5.0f-i);
+			for(int i = -1; i <= 1; i++){
+				for(int j = 0; j < 5; j++){
+					map->create_tile(i, -1.0f, -j);
+				}
 			}
 
 		}
 
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
-				//gluLookAt(cam_x, cam_y, cam_z, cam_focus_x, cam_focus_y, cam_focus_z, cam_yaw, cam_pitch, cam_roll);
 				switch(key){
-					case '1': camera->translate(0, 0, -0.5f); break;
-					case '2': camera->translate(0, 0, 0.5f); break;
+					case '1': camera->translate(0, 1.0f, 0); break;
+					case '2': camera->translate(0.5f, 0, 0); break;
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
@@ -290,4 +288,32 @@ int main(int argc, char** argv) {
 	game->init();
 	glutMainLoop();	
 	return 0;
+}
+
+void initGlut() {
+
+}
+void initGL() {
+    glShadeModel(GL_SMOOTH);                    // shading mathod: GL_SMOOTH or GL_FLAT
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);      // 4-byte pixel alignment
+
+    // enable /disable features
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+
+     // track material ambient and diffuse from surface color, call it before glEnable(GL_COLOR_MATERIAL)
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+
+    glClearColor(0, 0, 0, 0);                   // background color
+    glClearStencil(0);                          // clear stencil buffer
+    glClearDepth(1.0f);                         // 0 is near, 1 is far
+    glDepthFunc(GL_LEQUAL);
+
+    //initLights();
 }

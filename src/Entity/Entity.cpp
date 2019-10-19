@@ -114,6 +114,12 @@ void Entity::pos_update(float delta) {
 	_pos_pitch = pos_pitch;
 	_pos_yaw = pos_yaw;
 	_pos_roll = pos_roll;
+	_vel_x = vel_x;
+	_vel_y = vel_y;
+	_vel_z = vel_z;
+	_vel_yaw = vel_yaw;
+	_vel_pitch = vel_pitch;
+	_vel_roll = vel_roll;
 
 	if(has_accels){
 		if(has_accel_x) vel_x += accel_x * d;
@@ -123,6 +129,20 @@ void Entity::pos_update(float delta) {
 		if(has_accel_yaw) vel_yaw += accel_yaw * d;
 		if(has_accel_roll) vel_roll += accel_roll * d;
 	}
+
+	if (vel_x > 53.0f)
+		vel_x = 53.0f;
+	else if(vel_x < -53.0f)
+		vel_x = -53.0f;
+	if (vel_y > 53.0f)
+		vel_y = 53.0f;
+	else if(vel_y < -53.0f)
+		vel_y = -53.0f;
+	if (vel_z > 53.0f)
+		vel_z = 53.0f;
+	else if(vel_z < -53.0f)
+		vel_z = -53.0f;
+
 	pos_x += vel_x * d;
 	pos_y += vel_y * d;
 	pos_z += vel_z * d;
@@ -161,34 +181,41 @@ void Entity::check_collide() {
 		build_rot(pos_pitch, _pos_yaw, _pos_roll);
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
-			pos_pitch = _pos_pitch;
+			//pos_pitch = _pos_pitch;
+			vel_pitch = 0;
 			has_accel_pitch = false;
 		}
 
 		build_rot(_pos_pitch, pos_yaw, _pos_roll);
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
-			pos_yaw = _pos_yaw;
+			//pos_yaw = _pos_yaw;
+			vel_yaw = 0;
 			has_accel_yaw = false;
 		}
 
 		build_rot(_pos_pitch, _pos_yaw, pos_roll);
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
-			pos_roll = _pos_roll;
+			//pos_roll = _pos_roll;
+			vel_roll = 0;
 			has_accel_roll = false;
 		}
 
 		build_translate(pos_x, _pos_y, _pos_z);
+
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_x = _pos_x;
+			vel_x = 0;
 			has_accel_x = false;
 		}
+
 		build_translate(_pos_x, pos_y, _pos_z);
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_y = _pos_y;
+			vel_y = 0;
 			has_accel_y = false;
 		}
 
@@ -196,17 +223,16 @@ void Entity::check_collide() {
 		update_verts(bb_verts, bbverts);
 		if(does_collide()) {
 			pos_z = _pos_z;
+			vel_z = 0;
 			has_accel_z = false;
 		}
 }
 
 void Entity::update(float delta, GLuint programID) {
-
+	std::cout << vel_y << "\n";
 	pos_update(delta);
 	build_scale(scale_x, scale_y, scale_z);
-
 	check_collide();
-
 	WorldObject::update(delta, programID);
 
 }
