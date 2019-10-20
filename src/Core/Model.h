@@ -13,6 +13,7 @@ public:
 	void create_data_buffer(std::string path);
 	GLuint build_vbo();
 	GLuint build_ebo();
+	cube_bound get_bounds();
 
 
 	Model(std::string path) {

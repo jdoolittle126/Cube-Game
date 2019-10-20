@@ -15,6 +15,18 @@ const int	WINDOW_WIDTH = 640,
 
 // --- -------- --- //
 
+/*
+ * Inf Worlds
+ * Models and Model List
+ * Squid eating and size increase
+ * Dryness factor ?
+ * Smooth Camera
+ * Simple Animations (CPU or GPU sided) (More models, or calculated submodel movements?)
+ * Texturing
+ * Lighting
+ */
+
+
 
 GLuint programID;
 
@@ -30,7 +42,9 @@ class Game {
 
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
-		Entity* test = new Entity(1.0f, 0.0f, 1.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj"));
+		//std::vector<Model*> yeehaw = {new Model("src\\Assets\\Models\\squid_2.obj"), new Model("src\\Assets\\Models\\squid_1.obj"), new Model("src\\Assets\\Models\\squid_3.obj"), new Model("src\\Assets\\Models\\squid_1.obj")};
+		Entity* test = new Entity(1.0f, 0.0f, 1.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid_1.obj"));
+		WorldObject* car = new WorldObject(0.05f, -6.5f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\building.obj"));
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -38,7 +52,7 @@ class Game {
 
 		void update_delta() {
 			ts = glutGet(GLUT_ELAPSED_TIME);
-			delta = ts - _ts;
+			delta = (ts - _ts) / 1000.0f;
 			_ts = ts;
 		}
 
@@ -61,8 +75,8 @@ class Game {
 		}
 
 		void display() {
-			camera->set_pos(test->pos_x, test->pos_y+2.0f, test->pos_z+4.0f);
-			camera->look_at(test->pos_x, test->pos_y, test->pos_z);
+			camera->set_pos(test->get_pos_x(), test->get_pos_y()+(2.0f*test->get_scale_y()), test->get_pos_z()+(4.0f*test->get_scale_z()));
+			camera->look_at(test->get_pos_x(), test->get_pos_y(), test->get_pos_z());
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			GLuint proj = glGetUniformLocation(programID, "mat_projection");
@@ -78,8 +92,8 @@ class Game {
 		}
 
 		void build_map() {
-			for(int i = -1; i <= 1; i++){
-				for(int j = 0; j < 5; j++){
+			for(int i = -20; i <= 20; i++){
+				for(int j = -10; j < 25; j++){
 					map->create_tile(i, -1.0f, -j);
 				}
 			}
@@ -89,8 +103,8 @@ class Game {
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
 				switch(key){
-					case '1': camera->translate(0, 1.0f, 0); break;
-					case '2': camera->translate(0.5f, 0, 0); break;
+					case '1': break;
+					case '2': break;
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
@@ -149,6 +163,7 @@ class Game {
 		Game(){
 			test->set_world_map(map);
 			object_list.push_back(test);
+			//object_list.push_back(car);
 
 		}
 

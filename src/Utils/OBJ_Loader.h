@@ -18,7 +18,7 @@
 // Math.h - STD math Library
 #include <math.h>
 
-#define OBJL_CONSOLE_OUTPUT
+//#define OBJL_CONSOLE_OUTPUT
 
 // Namespace: OBJL
 //
@@ -150,7 +150,6 @@ namespace objl
 	{
 		Material()
 		{
-			name;
 			Ns = 0.0f;
 			Ni = 0.0f;
 			d = 0.0f;
@@ -860,7 +859,7 @@ namespace objl
 			while (true)
 			{
 				// For every vertex
-				for (int i = 0; i < int(tVerts.size()); i++)
+				for (unsigned int i = 0; i < unsigned(tVerts.size()); i++)
 				{
 					// pPrev = the previous vertex in the list
 					Vertex pPrev;

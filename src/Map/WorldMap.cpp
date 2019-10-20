@@ -4,13 +4,13 @@
 
 void WorldMap::update(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-	    tile->update(delta, programID);
+		if(tile->is_drawable()) tile->update(delta, programID);
 	}
 }
 
 void WorldMap::display(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-	    tile->display(delta, programID);
+	    if(tile->is_drawable()) tile->display(delta, programID);
 	}
 }
 
@@ -22,10 +22,10 @@ void WorldMap::destroy_tile(float x, float y, float z) {
 
 }
 
-std::vector<cubeBound> WorldMap::get_world_bounds() {
-	std::vector<cubeBound> b;
+std::vector<cube_bound> WorldMap::get_world_bounds() {
+	std::vector<cube_bound> b;
 	for(auto &tile : tiles) {
-	    b.push_back(tile->get_bounds());
+		if(tile->is_collidable()) b.push_back(tile->get_bounds());
 	}
 	return b;
 }

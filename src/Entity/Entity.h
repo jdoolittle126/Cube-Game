@@ -36,9 +36,7 @@ class Entity : public WorldObject {
 		bool 	has_accels = false,
 				has_accel_x = false, has_accel_y = false, has_accel_z = false, has_accel_pitch = false, has_accel_yaw = false, has_accel_roll = false;
 
-		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll)
-		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll)
-		{
+		void build() {
 			vel_x = 0.0f;
 			vel_y = 0.0f;
 			vel_z = 0.0f;
@@ -53,22 +51,24 @@ class Entity : public WorldObject {
 			accel_roll = 0.0f;
 		}
 
+		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll)
+		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll)
+		{
+			build();
+		}
+
 		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll, Model* i_model)
 		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll, i_model)
 		{
-			vel_x = 0.0f;
-			vel_y = 0.0f;
-			vel_z = 0.0f;
-			vel_yaw = 0.0f;
-			vel_pitch = 0.0f;
-			vel_roll = 0.0f;
-			accel_x = 0.0f;
-			accel_y = -9.81f;
-			accel_z = 0.0f;
-			accel_yaw = 0.0f;
-			accel_pitch = 0.0f;
-			accel_roll = 0.0f;
+			build();
 		}
+
+		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll, std::vector<Model*> i_model)
+		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll, i_model)
+		{
+			build();
+		}
+
 
 		void update(float delta, GLuint programID);
 		void display(float delta, GLuint programID);

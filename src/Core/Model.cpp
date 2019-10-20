@@ -55,3 +55,29 @@ GLuint Model::build_vbo() {
 
     return vbo;
 }
+
+cube_bound Model::get_bounds() {
+	cube_bound b;
+	bool flag = true;
+	for(auto t : model_verts){
+		if(flag) {
+			b.x1 = t.x;
+			b.x2 = t.x;
+			b.y1 = t.y;
+			b.y2 = t.y;
+			b.z1 = t.z;
+			b.z2 = t.z;
+			flag = false;
+		}
+
+		if(t.x > b.x1) b.x1 = t.x;
+		else if(t.x < b.x2) b.x2 = t.x;
+		if(t.y > b.y1) b.y1 = t.y;
+		else if(t.y < b.y2) b.y2 = t.y;
+		if(t.z > b.z1) b.z1 = t.z;
+		else if(t.z < b.z2) b.z2 = t.z;
+	}
+	return b;
+
+
+}

@@ -104,8 +104,6 @@ void Entity::set_accel_roll(float n){
 }
 
 void Entity::pos_update(float delta) {
-	float d = static_cast<float> (delta) / 1000;
-
 	_mat_transform = mat_transform;
 
 	_pos_x = pos_x;
@@ -122,12 +120,12 @@ void Entity::pos_update(float delta) {
 	_vel_roll = vel_roll;
 
 	if(has_accels){
-		if(has_accel_x) vel_x += accel_x * d;
-		if(has_accel_y) vel_y += accel_y * d;
-		if(has_accel_z) vel_z += accel_z * d;
-		if(has_accel_pitch) vel_pitch += accel_pitch * d;
-		if(has_accel_yaw) vel_yaw += accel_yaw * d;
-		if(has_accel_roll) vel_roll += accel_roll * d;
+		if(has_accel_x) vel_x += accel_x * delta;
+		if(has_accel_y) vel_y += accel_y * delta;
+		if(has_accel_z) vel_z += accel_z * delta;
+		if(has_accel_pitch) vel_pitch += accel_pitch * delta;
+		if(has_accel_yaw) vel_yaw += accel_yaw * delta;
+		if(has_accel_roll) vel_roll += accel_roll * delta;
 	}
 
 	if (vel_x > 53.0f)
@@ -143,33 +141,50 @@ void Entity::pos_update(float delta) {
 	else if(vel_z < -53.0f)
 		vel_z = -53.0f;
 
-	pos_x += vel_x * d;
-	pos_y += vel_y * d;
-	pos_z += vel_z * d;
-	pos_pitch += vel_pitch * d;
-	pos_yaw += vel_yaw * d;
-	pos_roll += vel_roll * d;
+	pos_x += vel_x * delta;
+	pos_y += vel_y * delta;
+	pos_z += vel_z * delta;
+	pos_pitch += vel_pitch * delta;
+	pos_yaw += vel_yaw * delta;
+	pos_roll += vel_roll * delta;
 
-	if (pos_pitch > 360.0f)
-		pos_pitch -= 360.0f;
+	if (pos_pitch > 2*PI)
+		pos_pitch -= 2*PI;
 	else if (pos_pitch < 0.0f)
-		pos_pitch += 360.0f;
-	if (pos_yaw > 360.0f)
-		pos_yaw -= 360.0f;
+		pos_pitch += 2*PI;
+	if (pos_yaw > 2*PI)
+		pos_yaw -= 2*PI;
 	else if (pos_yaw < 0.0f)
-		pos_yaw += 360.0f;
-	if (pos_roll > 360.0f)
-		pos_roll -= 360.0f;
+		pos_yaw += 2*PI;
+	if (pos_roll > 2*PI)
+		pos_roll -= 2*PI;
 	else if (pos_roll < 0.0f)
-		pos_roll += 360.0f;
+		pos_roll += 2*PI;
 
 }
 
 bool Entity::does_collide(){
+	float x_max, x_min, y_max, y_min, z_max, z_min;
+	bool flag = true;
 	for(auto p : bb_verts) {
-		for(auto b : map->get_world_bounds()) {
-			if((p.x >= b.x1 && p.x <= b.x2)&&(p.y >= b.y1 && p.y <= b.y2)&&(p.z >= b.z1 && p.z <= b.z2)) return true;
+		if(flag) {
+			x_max = p.x;
+			x_min = p.x;
+			y_max = p.y;
+			y_min = p.y;
+			z_max = p.z;
+			z_min = p.z;
+			flag = false;
 		}
+		if(p.x > x_max) x_max = p.x;
+		else if(p.x < x_min) x_min = p.x;
+		if(p.y > y_max) y_max = p.y;
+		else if(p.y < y_min) y_min = p.y;
+		if(p.z > z_max) z_max = p.z;
+		else if(p.z < z_min) z_min = p.z;
+	}
+	for(auto b : map->get_world_bounds()) {
+		if((x_min <= b.x1 && x_max >= b.x2)&&(y_min <= b.y1 && y_max >= b.y2)&&(z_min <= b.z1 && z_max >= b.z2)) return true;
 	}
 	return false;
 }
@@ -229,7 +244,6 @@ void Entity::check_collide() {
 }
 
 void Entity::update(float delta, GLuint programID) {
-	std::cout << vel_y << "\n";
 	pos_update(delta);
 	build_scale(scale_x, scale_y, scale_z);
 	check_collide();

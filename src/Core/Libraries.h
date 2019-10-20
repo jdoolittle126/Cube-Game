@@ -31,10 +31,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-
-
-
 #define PI 3.14159265
+
+struct cube_bound {
+	float 	x1, x2,
+			y1, y2,
+			z1, z2;
+};
 
 const float colors[12][3] = {
 			{1.0f, 0.0f, 0.0f},
