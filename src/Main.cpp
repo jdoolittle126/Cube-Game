@@ -26,7 +26,9 @@ const int	WINDOW_WIDTH = 640,
  * Lighting
  */
 
-
+void initGlut();
+void initGL();
+void initLights();
 
 GLuint programID;
 
@@ -43,8 +45,8 @@ class Game {
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
 		WorldMap* map = new WorldMap();
 		//std::vector<Model*> yeehaw = {new Model("src\\Assets\\Models\\squid_2.obj"), new Model("src\\Assets\\Models\\squid_1.obj"), new Model("src\\Assets\\Models\\squid_3.obj"), new Model("src\\Assets\\Models\\squid_1.obj")};
-		Entity* test = new Entity(1.0f, 0.0f, 1.0f, -5.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid_1.obj"));
-		WorldObject* car = new WorldObject(0.05f, -6.5f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\building.obj"));
+		Entity* test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid_1.obj", "src\\Assets\\Models\\UV.bmp"));
+		//WorldObject* car = new WorldObject(0.05f, -6.5f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\building.obj"));
 		std::vector<GameObject*> object_list;
 
 	public:
@@ -54,15 +56,6 @@ class Game {
 			ts = glutGet(GLUT_ELAPSED_TIME);
 			delta = (ts - _ts) / 1000.0f;
 			_ts = ts;
-		}
-
-		void init() {
-			glClearColor(0.0, 0.0, 0.0, 1.0f);
-			glClearDepth(1.0f);
-			glEnable(GL_DEPTH_TEST);
-			glDepthFunc(GL_LEQUAL);
-			glShadeModel(GL_FLAT);
-			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		}
 
 		void update() {
@@ -77,8 +70,6 @@ class Game {
 		void display() {
 			camera->set_pos(test->get_pos_x(), test->get_pos_y()+(2.0f*test->get_scale_y()), test->get_pos_z()+(4.0f*test->get_scale_z()));
 			camera->look_at(test->get_pos_x(), test->get_pos_y(), test->get_pos_z());
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			GLuint proj = glGetUniformLocation(programID, "mat_projection");
 			GLuint view = glGetUniformLocation(programID, "mat_view");
 			//std::cout << glm::to_string(camera->projection) << "\n";
@@ -288,6 +279,16 @@ int main(int argc, char** argv) {
 	//Make the default cursor disappear
 	//glutSetCursor(GLUT_CURSOR_NONE);
 
+	initGlut();
+	initGL();
+
+	programID = setup_shaders();
+	game = new Game();
+	glutMainLoop();
+	return 0;
+}
+
+void initGlut() {
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(render);			
 	glutKeyboardFunc(keyboard);		
@@ -298,37 +299,67 @@ int main(int argc, char** argv) {
     glutMotionFunc(mouse_move);
     glutPassiveMotionFunc(mouse_move);
 	glutIdleFunc(tick);
-	programID = setup_shaders();
-	game = new Game();
-	game->init();
-	glutMainLoop();	
-	return 0;
 }
 
-void initGlut() {
-
-}
 void initGL() {
-    glShadeModel(GL_SMOOTH);                    // shading mathod: GL_SMOOTH or GL_FLAT
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);      // 4-byte pixel alignment
+    glShadeModel(GL_SMOOTH);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-    // enable /disable features
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_CULL_FACE);
 
-     // track material ambient and diffuse from surface color, call it before glEnable(GL_COLOR_MATERIAL)
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
 
-    glClearColor(0, 0, 0, 0);                   // background color
-    glClearStencil(0);                          // clear stencil buffer
-    glClearDepth(1.0f);                         // 0 is near, 1 is far
+    glClearColor(0, 0, 0, 0);
+    glClearStencil(0);
+    glClearDepth(1.0f);
     glDepthFunc(GL_LEQUAL);
 
-    //initLights();
+    initLights();
 }
+
+void initLights()
+{
+
+	//FROM SONGHO, NEEDS WORK
+    GLfloat lightKa[] = {.3f, .3f, .3f, 1.0f};
+    GLfloat lightKd[] = {.7f, .7f, .7f, 1.0f};
+    GLfloat lightKs[] = {1, 1, 1, 1};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightKa);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightKd);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightKs);
+
+    float lightPos[4] = {0, 0, 1, 0};
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+
+    glEnable(GL_LIGHT0);
+
+
+    GLint uniformLightPosition;
+    GLint uniformLightAmbient;
+    GLint uniformLightDiffuse;
+    GLint uniformLightSpecular;
+
+    uniformLightPosition             = glGetUniformLocation(programID, "light_pos");
+    uniformLightAmbient              = glGetUniformLocation(programID, "light_amb");
+    uniformLightDiffuse              = glGetUniformLocation(programID, "light_diff");
+    uniformLightSpecular             = glGetUniformLocation(programID, "light_spec");
+
+    // set uniform values
+    float lightPosition[] = {0, 0, 1, 0};
+    float lightAmbient[]  = {0.3f, 0.3f, 0.3f, 1};
+    float lightDiffuse[]  = {0.7f, 0.7f, 0.7f, 1};
+    float lightSpecular[] = {1.0f, 1.0f, 1.0f, 1};
+    glUniform4fv(uniformLightPosition, 1, lightPosition);
+    glUniform4fv(uniformLightAmbient, 1, lightAmbient);
+    glUniform4fv(uniformLightDiffuse, 1, lightDiffuse);
+    glUniform4fv(uniformLightSpecular, 1, lightSpecular);
+
+
+}
+

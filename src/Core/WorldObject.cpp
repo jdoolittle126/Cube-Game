@@ -124,6 +124,7 @@ void WorldObject::update(float delta, GLuint programID) {
 void WorldObject::display(float delta, GLuint programID) {
 
 		if(draw_bb || !use_model) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 			glm::mat4 _mat_transform = mat_translate * mat_scale;
 			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &_mat_transform[0][0]);
@@ -140,16 +141,36 @@ void WorldObject::display(float delta, GLuint programID) {
 		}
 
 		if(use_model){
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			GLuint textureID  = glGetUniformLocation(programID, "sampler");
 			GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 			glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 
-			glBindBuffer(GL_ARRAY_BUFFER, model.at(current_model)->vboId);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, model.at(current_model)->textureId);
+			glUniform1i(textureID, 0);
+
+
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.at(current_model)->eboId);
+
 			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+
+			glBindBuffer(GL_ARRAY_BUFFER, model.at(current_model)->vboId);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+			glBindBuffer(GL_ARRAY_BUFFER, model.at(current_model)->uvboId);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+			glBindBuffer(GL_ARRAY_BUFFER, model.at(current_model)->nboId);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 			glDrawElements(GL_TRIANGLES, model.at(current_model)->model_indices.size(), GL_UNSIGNED_INT, 0);
+
 			glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(2);
 
 		}
 
