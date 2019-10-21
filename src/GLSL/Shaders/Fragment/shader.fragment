@@ -10,26 +10,31 @@ uniform vec4 light_diff;
 uniform vec4 light_spec;
 uniform sampler2D sampler;
 
-void main()
-{
-	vec3 normal = normalize(v_normal);
-    vec3 light;
-    
-    if(light_pos.w == 0.0) {
-        light = normalize(light_pos.xyz);
-    } else {
-        light = normalize(light_pos.xyz - v_model);
-    }
-    
-    vec3 view = normalize(-v_model);
-   	vec3 halfv = normalize(light + view);
+void main() {
 
-    //vec3 fragColor = light_amb.rgb;
-    //float dotNL = max(dot(normal, light), 0.0);
-    //fragColor += light_diff.rgb * dotNL;
-    //fragColor *= texture2D(sampler, v_tex).rgb;
-    //float dotNH = max(dot(normal, halfv), 0.0);
-   	//fragColor += pow(dotNH, 128.0) * light_spec.rgb;
-   // gl_FragColor = vec4(fragColor, 1.0);
-    gl_FragColor = vec4(texture(sampler, v_tex).rgb, 1);
+	bool calc_lighting = true;
+	if(calc_lighting) {
+		vec3 normal = normalize(v_normal);
+	    vec3 light;
+	    
+	    if(light_pos.w == 0.0) {
+	        light = normalize(light_pos.xyz);
+	    } else {
+	        light = normalize(light_pos.xyz - v_model);
+	    }
+	    
+	    vec3 view = normalize(-v_model);
+	   	vec3 halfv = normalize(light + view);
+	
+	    vec3 fragColor = light_amb.rgb;
+	    float dotNL = max(dot(normal, light), 0.0);
+	    fragColor += light_diff.rgb * dotNL;
+	    fragColor *= texture2D(sampler, v_tex).rgb;
+	    float dotNH = max(dot(normal, halfv), 0.0);
+	   	fragColor += pow(dotNH, 128.0) * light_spec.rgb;
+	    gl_FragColor = vec4(fragColor, 1.0);
+    } else {
+    	gl_FragColor = vec4(texture(sampler, v_tex).rgb, 1);
+    }
+
 } 

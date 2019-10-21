@@ -30,7 +30,15 @@ void initGlut();
 void initGL();
 void initLights();
 
+GLint uniformLightPosition;
+GLint uniformLightAmbient;
+GLint uniformLightDiffuse;
+GLint uniformLightSpecular;
+GLint uniformLighting;
+
 GLuint programID;
+
+int honk = 0;
 
 class Game {
 	private:
@@ -75,6 +83,7 @@ class Game {
 			//std::cout << glm::to_string(camera->projection) << "\n";
 			glUniformMatrix4fv(proj, 1, GL_FALSE, &camera->projection[0][0]);
 			glUniformMatrix4fv(view, 1, GL_FALSE, &camera->view[0][0]);
+			//glUniform1i(uniformLighting, honk);
 
 			map->display(delta, programID);
 			for(auto &obj : object_list) {
@@ -94,8 +103,8 @@ class Game {
 		void keyboard(unsigned char key, int x, int y, bool up, int mod) {
 			if(up) {
 				switch(key){
-					case '1': break;
-					case '2': break;
+					case '1': honk = 0; break;
+					case '2': honk = 1; break;
 					case 'a': test->set_vel_x(-3.0f); break;
 					case 'd': test->set_vel_x(3.0f); break;
 					case 's': test->set_vel_z(3.0f); break;
@@ -338,12 +347,6 @@ void initLights()
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
     glEnable(GL_LIGHT0);
-
-
-    GLint uniformLightPosition;
-    GLint uniformLightAmbient;
-    GLint uniformLightDiffuse;
-    GLint uniformLightSpecular;
 
     uniformLightPosition             = glGetUniformLocation(programID, "light_pos");
     uniformLightAmbient              = glGetUniformLocation(programID, "light_amb");
