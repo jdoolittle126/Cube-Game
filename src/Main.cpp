@@ -179,7 +179,7 @@ GLuint setup_shaders() {
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	std::ifstream stream;
-	stream.open("src/GLSL/Shaders/Vertex/shader.vertex", std::ios::in);
+	stream.open("src/GLSL/Shaders/Vertex/obj_shader.vertex", std::ios::in);
 	std::string line = "", content_vert, content_frag;
 
 	while(!stream.eof()) {
@@ -189,7 +189,7 @@ GLuint setup_shaders() {
 
 	stream.close();
 
-	stream.open("src/GLSL/Shaders/Fragment/shader.fragment", std::ios::in);
+	stream.open("src/GLSL/Shaders/Fragment/obj_shader.fragment", std::ios::in);
 
 	while(!stream.eof()) {
 		std::getline(stream, line);
