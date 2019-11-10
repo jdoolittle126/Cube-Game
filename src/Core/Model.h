@@ -11,7 +11,6 @@ public:
 
 
 	void create_obj_buffer(std::string path);
-	GLuint build_texture(std::string path);
 	GLuint build_vbo();
 	GLuint build_ebo();
 	GLuint build_uvbo();

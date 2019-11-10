@@ -14,7 +14,7 @@ public:
 
 	void update(float delta, GLuint programID);
 	void display(float delta, GLuint programID);
-	void create_tile(float x, float y, float z);
+	void create_tile(float x, float y, float z, GLuint textureId);
 	void destroy_tile(float x, float y, float z);
 	std::vector<cube_bound> get_world_bounds();
 

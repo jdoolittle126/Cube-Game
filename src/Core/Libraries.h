@@ -32,6 +32,7 @@
 #include <glm/gtx/transform.hpp>
 
 #define PI 3.14159265
+#define DEFAULT_CUBE_SIZE 0.5
 
 struct cube_bound {
 	float 	x1, x2,
@@ -52,4 +53,8 @@ const float colors[12][3] = {
 			{0.7f, 0.7f, 0.7f},
 			{0.6f, 0.6f, 0.6f},
 			{0.0f, 0.0f, 0.0f}};
+
+enum RenderType {RENDER_CUBE, RENDER_MODEL};
+
+GLuint build_texture(std::string path);
 

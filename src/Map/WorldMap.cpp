@@ -4,18 +4,18 @@
 
 void WorldMap::update(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-		if(tile->is_drawable()) tile->update(delta, programID);
+		if(tile->is_drawing()) tile->update(delta, programID);
 	}
 }
 
 void WorldMap::display(float delta, GLuint programID) {
 	for(auto &tile : tiles) {
-	    if(tile->is_drawable()) tile->display(delta, programID);
+	    if(tile->is_drawing()) tile->display(delta, programID);
 	}
 }
 
-void WorldMap::create_tile(float x, float y, float z) {
-	tiles.push_back(new MapTile(x, y, z));
+void WorldMap::create_tile(float x, float y, float z, GLuint textureId) {
+	tiles.push_back(new MapTile(x, y, z, textureId));
 }
 
 void WorldMap::destroy_tile(float x, float y, float z) {

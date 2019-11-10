@@ -31,6 +31,7 @@ class Entity : public WorldObject {
 					_pos_yaw,
 					_pos_roll;
 
+
 		WorldMap* map;
 
 		bool 	has_accels = false,
@@ -49,12 +50,6 @@ class Entity : public WorldObject {
 			accel_yaw = 0.0f;
 			accel_pitch = 0.0f;
 			accel_roll = 0.0f;
-		}
-
-		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll)
-		: WorldObject(i_size, i_x, i_y, i_z, i_yaw, i_pitch, i_roll)
-		{
-			build();
 		}
 
 		Entity(float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll, Model* i_model)

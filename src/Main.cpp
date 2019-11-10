@@ -24,6 +24,7 @@ const int	WINDOW_WIDTH = 640,
  * Simple Animations (CPU or GPU sided) (More models, or calculated submodel movements?)
  * Texturing
  * Lighting
+ * Memory Leaks!
  */
 
 void initGlut();
@@ -92,9 +93,14 @@ class Game {
 		}
 
 		void build_map() {
+			GLuint textureId = build_texture("src\\Assets\\Grass.bmp");
+
+			map->create_tile(0, -1.0f, 0, textureId);
+			map->create_tile(1, -1.0f, 0, textureId);
+
 			for(int i = -20; i <= 20; i++){
 				for(int j = -10; j < 25; j++){
-					map->create_tile(i, -1.0f, -j);
+					//map->create_tile(i, -1.0f, -j, textureId);
 				}
 			}
 
