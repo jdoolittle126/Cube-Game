@@ -243,15 +243,15 @@ void Entity::check_collide() {
 		}
 }
 
-void Entity::update(float delta, GLuint programID) {
+void Entity::update(float delta) {
 	pos_update(delta);
 	build_scale(scale_x, scale_y, scale_z);
 	check_collide();
-	WorldObject::update(delta, programID);
+	WorldObject::update(delta);
 
 }
 
-void Entity::display(float delta, GLuint programID) {
-			WorldObject::display(delta, programID);
+void Entity::display(float delta, ShaderManager shader_manager) {
+			WorldObject::display(delta, shader_manager);
 
 }

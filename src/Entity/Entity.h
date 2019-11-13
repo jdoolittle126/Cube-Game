@@ -65,8 +65,8 @@ class Entity : public WorldObject {
 		}
 
 
-		void update(float delta, GLuint programID);
-		void display(float delta, GLuint programID);
+		void update(float delta);
+		void display(float delta, ShaderManager shader_manager);
 		void set_world_map(WorldMap* m){
 			map = m;
 		}

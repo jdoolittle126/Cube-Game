@@ -31,8 +31,8 @@
 		GameObject::build_debug();
 	}
 
-void WorldObject::update(float delta, GLuint programID) {
-	GameObject::update(delta, programID);
+void WorldObject::update(float delta) {
+	GameObject::update(delta);
 
 	if(animated) {
 		delta_arg += delta;
@@ -45,8 +45,10 @@ void WorldObject::update(float delta, GLuint programID) {
 
 }
 
-void WorldObject::display(float delta, GLuint programID) {
-		GameObject::display(delta, programID);
+void WorldObject::display(float delta, ShaderManager shader_manager) {
+
+
+		GLuint programID = shader_manager.use_shader("WorldObj");
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		GLuint textureID  = glGetUniformLocation(programID, "sampler");
@@ -79,5 +81,5 @@ void WorldObject::display(float delta, GLuint programID) {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
 
-
+		GameObject::display(delta, shader_manager);
 }

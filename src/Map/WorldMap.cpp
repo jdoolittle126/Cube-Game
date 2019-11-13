@@ -1,21 +1,23 @@
 #include "WorldMap.h"
 #include "MapTile.h"
 #include "../Core/Libraries.h"
+#include "MapTileManager.h"
 
-void WorldMap::update(float delta, GLuint programID) {
+
+void WorldMap::update(float delta) {
 	for(auto &tile : tiles) {
-		if(tile->is_drawing()) tile->update(delta, programID);
+		if(tile->is_drawing()) tile->update(delta);
 	}
 }
 
-void WorldMap::display(float delta, GLuint programID) {
+void WorldMap::display(float delta, ShaderManager shader_manager) {
 	for(auto &tile : tiles) {
-	    if(tile->is_drawing()) tile->display(delta, programID);
+	    if(tile->is_drawing()) tile->display(delta, shader_manager);
 	}
 }
 
-void WorldMap::create_tile(float x, float y, float z, GLuint textureId) {
-	tiles.push_back(new MapTile(x, y, z, textureId));
+void WorldMap::create_tile(float x, float y, float z, int tex_x, int tex_y) {
+	tiles.push_back(new MapTile(x, y, z, manager.getTile(tex_x, tex_y)));
 }
 
 void WorldMap::destroy_tile(float x, float y, float z) {

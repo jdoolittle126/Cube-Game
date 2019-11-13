@@ -1,0 +1,11 @@
+#version 330 core
+
+in vec3 v_model;
+in vec2 v_tex;
+in vec3 v_normal;
+
+uniform sampler2D sampler;
+
+void main() {
+    	gl_FragColor = vec4(texture(sampler, v_tex).rgb, 1);
+} 

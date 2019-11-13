@@ -21,7 +21,7 @@ public:
 
 	Model(std::string obj_path, std::string bmp_path) {
 		create_obj_buffer(obj_path);
-		textureId = build_texture(bmp_path);
+		textureId = build_texture(bmp_path, GL_TEXTURE_2D);
 		vboId = build_vbo();
 		eboId = build_ebo();
 		uvboId = build_uvbo();

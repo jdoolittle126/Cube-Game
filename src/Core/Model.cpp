@@ -27,9 +27,10 @@ void Model::create_obj_buffer(std::string path)
 	}
 
 	if(loadout) {
-		std::cout << "Success" << std::endl;
+
+		std::cout << "Success\n";
 	} else {
-		std::cout << "Fail" << std::endl;
+		std::cout << "Fail\n";
 	}
 
 

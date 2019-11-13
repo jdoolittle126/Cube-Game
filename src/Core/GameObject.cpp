@@ -98,7 +98,7 @@ void GameObject::update_verts(std::vector<glm::vec3> &_v, std::vector<glm::vec3>
 }
 
 
-void GameObject::update(float delta, GLuint programID) {
+void GameObject::update(float delta) {
 	build_translate(pos_x, pos_y, pos_z);
 	build_rot(pos_pitch, pos_yaw, pos_roll);
 	build_scale(scale_x, scale_y, scale_z);
@@ -107,8 +107,9 @@ void GameObject::update(float delta, GLuint programID) {
 	update_verts(bb_verts, bbverts);
 }
 
-void GameObject::display(float delta, GLuint programID) {
+void GameObject::display(float delta, ShaderManager shader_manager) {
 	if(debug) {
+		GLuint programID = shader_manager.use_shader("Debug");
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 		glm::mat4 _mat_transform = mat_translate * mat_scale;

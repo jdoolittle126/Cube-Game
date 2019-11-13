@@ -1,9 +1,10 @@
 #pragma once
 #include "Libraries.h"
+#include "ShaderManager.h"
 
 class GameObject {
 protected:
-	bool debug = true;
+	bool debug = false;
 	RenderType render_type;
 	std::vector<glm::vec3> bbverts, bb_verts;
 	GLuint debug_vboId, debug_eboId;
@@ -33,6 +34,11 @@ protected:
 			scale_y = i_size;
 			scale_z = i_size;
 			build(i_x, i_y, i_z, i_yaw, i_pitch, i_roll);
+		}
+
+		~GameObject() {
+			glDeleteBuffers(1, &debug_vboId);
+			glDeleteBuffers(1, &debug_eboId);
 		}
 
 		void build_debug(){
@@ -103,8 +109,8 @@ protected:
 			}
 		}
 
-		virtual void update(float delta, GLuint programID);
-		virtual void display(float delta, GLuint programID);
+		virtual void update(float delta);
+		virtual void display(float delta, ShaderManager shader_manager);
 		float get_scale_x();
 		float get_scale_y();
 		float get_scale_z();

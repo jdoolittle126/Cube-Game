@@ -26,6 +26,6 @@ public:
 	}
 
 	void build_bounds();
-	void update(float delta, GLuint programID);
-	void display(float delta, GLuint programID);
+	void update(float delta);
+	void display(float delta, ShaderManager shader_manager);
 };

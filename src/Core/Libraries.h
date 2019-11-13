@@ -16,6 +16,7 @@
 #include <vector>
 #include <math.h>
 #include <fstream>
+#include <map>
 
 #include <Windows.h>
 #include <GL/glew.h>
@@ -30,6 +31,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include "../Utils/cute_png.h"
+
 
 #define PI 3.14159265
 #define DEFAULT_CUBE_SIZE 0.5
@@ -56,5 +59,5 @@ const float colors[12][3] = {
 
 enum RenderType {RENDER_CUBE, RENDER_MODEL};
 
-GLuint build_texture(std::string path);
+GLuint build_texture(std::string path, GLenum type);
 

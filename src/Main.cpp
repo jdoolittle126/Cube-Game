@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "Core/ShaderManager.h"
 
 #define TITLE "hehe"
 
@@ -31,19 +32,15 @@ void initGlut();
 void initGL();
 void initLights();
 
-GLint uniformLightPosition;
-GLint uniformLightAmbient;
-GLint uniformLightDiffuse;
-GLint uniformLightSpecular;
-GLint uniformLighting;
-
-GLuint programID;
+ShaderManager shader_manager;
 
 int honk = 0;
+int nbFrames = 0;
+float delta_ag = 0;
 
 class Game {
 	private:
-		float delta, ts, _ts;
+		float delta, ts, _ts = 0.0f;
 		GLdouble 	cam_x = 0.0, cam_y = 0.0, cam_z = 0.0,
 					cam_focus_x = 0.0, cam_focus_y = 0.0, cam_focus_z = 0.0,
 					cam_yaw = 0.0, cam_pitch = 1.0, cam_roll = 0.0;
@@ -52,9 +49,11 @@ class Game {
 		float gravity = -9.81f;
 
 		Camera* camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-		WorldMap* map = new WorldMap();
+		GLuint textureId = build_texture("src\\Assets\\Road.bmp", GL_TEXTURE_2D);
+		WorldMap* map = new WorldMap(textureId);
 		//std::vector<Model*> yeehaw = {new Model("src\\Assets\\Models\\squid_2.obj"), new Model("src\\Assets\\Models\\squid_1.obj"), new Model("src\\Assets\\Models\\squid_3.obj"), new Model("src\\Assets\\Models\\squid_1.obj")};
-		Entity* test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid_1.obj", "src\\Assets\\Models\\UV.bmp"));
+		Entity* test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", "src\\Assets\\Models\\UV.bmp"));
+		//Entity* test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\untitled.obj", "src\\Assets\\Models\\Grass.bmp"));
 		//WorldObject* car = new WorldObject(0.05f, -6.5f, 0.0f, -25.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\building.obj"));
 		std::vector<GameObject*> object_list;
 
@@ -65,42 +64,48 @@ class Game {
 			ts = glutGet(GLUT_ELAPSED_TIME);
 			delta = (ts - _ts) / 1000.0f;
 			_ts = ts;
+
+			nbFrames++;
+			delta_ag += delta;
+			if (delta_ag >= 1.0f ){ // If last prinf() was more than 1sec ago
+				printf("%f ms/frame\n", 1000.0/double(nbFrames));
+				printf("%i FPS\n", nbFrames);
+				nbFrames = 0;
+				delta_ag -= 1.0f;
+			}
+
 		}
 
 		void update() {
 			update_delta();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			map->update(delta, programID);
+			map->update(delta);
 			for(auto &obj : object_list) {
-			    obj->update(delta, programID);
+			    obj->update(delta);
 			}
 		}
 
 		void display() {
 			camera->set_pos(test->get_pos_x(), test->get_pos_y()+(2.0f*test->get_scale_y()), test->get_pos_z()+(4.0f*test->get_scale_z()));
 			camera->look_at(test->get_pos_x(), test->get_pos_y(), test->get_pos_z());
-			GLuint proj = glGetUniformLocation(programID, "mat_projection");
-			GLuint view = glGetUniformLocation(programID, "mat_view");
-			//std::cout << glm::to_string(camera->projection) << "\n";
-			glUniformMatrix4fv(proj, 1, GL_FALSE, &camera->projection[0][0]);
-			glUniformMatrix4fv(view, 1, GL_FALSE, &camera->view[0][0]);
-			//glUniform1i(uniformLighting, honk);
 
-			map->display(delta, programID);
+		    for (std::map<std::string, GLuint>::iterator i = shader_manager.get_shaders().begin(); i != shader_manager.get_shaders().end(); ++i) {
+		    	glUseProgram(i->second);
+				glUniformMatrix4fv(glGetUniformLocation(i->second, "mat_projection"), 1, GL_FALSE, &camera->projection[0][0]);
+				glUniformMatrix4fv(glGetUniformLocation(i->second, "mat_view"), 1, GL_FALSE, &camera->view[0][0]);
+		    }
+
+			map->display(delta, shader_manager);
 			for(auto &obj : object_list) {
-			    obj->display(delta, programID);
+			    obj->display(delta, shader_manager);
 			}
 		}
 
 		void build_map() {
-			GLuint textureId = build_texture("src\\Assets\\Grass.bmp");
 
-			map->create_tile(0, -1.0f, 0, textureId);
-			map->create_tile(1, -1.0f, 0, textureId);
-
-			for(int i = -20; i <= 20; i++){
-				for(int j = -10; j < 25; j++){
-					//map->create_tile(i, -1.0f, -j, textureId);
+			for(int i = -5; i < 5; i++){
+				for(int j = -5; j < 5; j++){
+					map->create_tile(i, -1.0f, -j, i+6, j+6);
 				}
 			}
 
@@ -180,51 +185,10 @@ float w_x, w_y;
 
 // --- -------- --- //
 
-GLuint setup_shaders() {
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
-	std::ifstream stream;
-	stream.open("src/GLSL/Shaders/Vertex/obj_shader.vertex", std::ios::in);
-	std::string line = "", content_vert, content_frag;
-
-	while(!stream.eof()) {
-		std::getline(stream, line);
-		content_vert.append(line + "\n");
-	}
-
-	stream.close();
-
-	stream.open("src/GLSL/Shaders/Fragment/obj_shader.fragment", std::ios::in);
-
-	while(!stream.eof()) {
-		std::getline(stream, line);
-		content_frag.append(line + "\n");
-	}
-
-	stream.close();
-
-    const char *vs = content_vert.c_str();
-    const char *fs = content_frag.c_str();
-
-	glShaderSource(VertexShaderID, 1, &vs, NULL);
-	glCompileShader(VertexShaderID);
-
-	glShaderSource(FragmentShaderID, 1, &fs, NULL );
-	glCompileShader(FragmentShaderID );
-
-	GLuint ProgramID = glCreateProgram();
-	glAttachShader(ProgramID, VertexShaderID);
-	glAttachShader(ProgramID, FragmentShaderID);
-	glLinkProgram(ProgramID);
-
-	glDetachShader(ProgramID, VertexShaderID);
-	glDetachShader(ProgramID, FragmentShaderID);
-
-	glDeleteShader(VertexShaderID);
-	glDeleteShader(FragmentShaderID);
-
-	return ProgramID;
+void setup_shaders() {
+	shader_manager.create_shader("Debug", "src/GLSL/Shaders/Fragment/debug.fragment", "src/GLSL/Shaders/Vertex/debug.vertex");
+	shader_manager.create_shader("WorldObj", "src/GLSL/Shaders/Fragment/world_obj.fragment", "src/GLSL/Shaders/Vertex/world_obj.vertex");
+	shader_manager.create_shader("Tile", "src/GLSL/Shaders/Fragment/tile.fragment", "src/GLSL/Shaders/Vertex/tile.vertex");
 }
 
 
@@ -234,7 +198,6 @@ void reshape(int w, int h) {
 
 void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(programID);
 	game->update();
 	game->display();
 	glutSwapBuffers();
@@ -297,7 +260,7 @@ int main(int argc, char** argv) {
 	initGlut();
 	initGL();
 
-	programID = setup_shaders();
+	setup_shaders();
 	game = new Game();
 	glutMainLoop();
 	return 0;
@@ -326,6 +289,8 @@ void initGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
@@ -334,41 +299,6 @@ void initGL() {
     glClearStencil(0);
     glClearDepth(1.0f);
     glDepthFunc(GL_LEQUAL);
-
-    initLights();
 }
 
-void initLights()
-{
-
-	//FROM SONGHO, NEEDS WORK
-    GLfloat lightKa[] = {.3f, .3f, .3f, 1.0f};
-    GLfloat lightKd[] = {.7f, .7f, .7f, 1.0f};
-    GLfloat lightKs[] = {1, 1, 1, 1};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightKa);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightKd);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightKs);
-
-    float lightPos[4] = {0, 0, 1, 0};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-
-    glEnable(GL_LIGHT0);
-
-    uniformLightPosition             = glGetUniformLocation(programID, "light_pos");
-    uniformLightAmbient              = glGetUniformLocation(programID, "light_amb");
-    uniformLightDiffuse              = glGetUniformLocation(programID, "light_diff");
-    uniformLightSpecular             = glGetUniformLocation(programID, "light_spec");
-
-    // set uniform values
-    float lightPosition[] = {0, 0, 1, 0};
-    float lightAmbient[]  = {0.3f, 0.3f, 0.3f, 1};
-    float lightDiffuse[]  = {0.7f, 0.7f, 0.7f, 1};
-    float lightSpecular[] = {1.0f, 1.0f, 1.0f, 1};
-    glUniform4fv(uniformLightPosition, 1, lightPosition);
-    glUniform4fv(uniformLightAmbient, 1, lightAmbient);
-    glUniform4fv(uniformLightDiffuse, 1, lightDiffuse);
-    glUniform4fv(uniformLightSpecular, 1, lightSpecular);
-
-
-}
 
