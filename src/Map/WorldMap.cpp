@@ -10,7 +10,7 @@ void WorldMap::update(float delta) {
 	}
 }
 
-void WorldMap::display(float delta, ShaderManager shader_manager) {
+void WorldMap::display(float delta, ShaderManager & shader_manager) {
 	for(auto &tile : tiles) {
 	    if(tile->is_drawing()) tile->display(delta, shader_manager);
 	}

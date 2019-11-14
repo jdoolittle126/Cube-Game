@@ -45,7 +45,7 @@ void WorldObject::update(float delta) {
 
 }
 
-void WorldObject::display(float delta, ShaderManager shader_manager) {
+void WorldObject::display(float delta, ShaderManager & shader_manager) {
 
 
 		GLuint programID = shader_manager.use_shader("WorldObj");

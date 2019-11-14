@@ -14,7 +14,7 @@ public:
 	}
 
 	void update(float delta);
-	void display(float delta, ShaderManager shader_manager);
+	void display(float delta, ShaderManager & shader_manager);
 	void create_tile(float x, float y, float z, int tex_x, int tex_y);
 	void destroy_tile(float x, float y, float z);
 	std::vector<cube_bound> get_world_bounds();

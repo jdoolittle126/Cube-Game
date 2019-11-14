@@ -37,6 +37,9 @@
 #define PI 3.14159265
 #define DEFAULT_CUBE_SIZE 0.5
 
+const int	WINDOW_WIDTH = 640,
+			WINDOW_HEIGHT = 480;
+
 struct cube_bound {
 	float 	x1, x2,
 			y1, y2,

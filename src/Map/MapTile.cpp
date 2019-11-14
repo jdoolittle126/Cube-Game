@@ -20,19 +20,17 @@ bool MapTile::is_drawing() {
 void MapTile::update(float delta) {
 	GameObject::update(delta);
 }
-void MapTile::display(float delta, ShaderManager shader_manager) {
+void MapTile::display(float delta, ShaderManager & shader_manager) {
 	if(drawing) {
-
 		GLuint programID = shader_manager.use_shader("WorldObj");
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		GLuint textureID  = glGetUniformLocation(programID, "sampler");
 		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 		glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, ref_tile->getTextureId());
-		glUniform1i(textureID, 0);
+		glUniform1i(glGetUniformLocation(programID, "sampler"), 0);
 
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ref_tile->getEboId());
@@ -55,7 +53,6 @@ void MapTile::display(float delta, ShaderManager shader_manager) {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
-
 		GameObject::display(delta, shader_manager);
 	}
 

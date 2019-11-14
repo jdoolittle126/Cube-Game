@@ -5,6 +5,7 @@
 class GameObject {
 protected:
 	bool debug = false;
+	bool isStatic, doManualUpdate;
 	RenderType render_type;
 	std::vector<glm::vec3> bbverts, bb_verts;
 	GLuint debug_vboId, debug_eboId;
@@ -29,6 +30,7 @@ protected:
 	public:
 
 		GameObject(RenderType i_render_type, float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll) {
+			isStatic = doManualUpdate = false;
 			render_type = i_render_type;
 			scale_x = i_size;
 			scale_y = i_size;
@@ -78,6 +80,7 @@ protected:
 		void build_bounds() {
 			if(render_type != RenderType::RENDER_MODEL) {
 				bbverts.clear();
+				bb_verts.clear();
 				float s_x, s_y, s_z;
 				cube_bound b;
 				b.x1 = -0.5f;
@@ -109,8 +112,16 @@ protected:
 			}
 		}
 
+		void set_static(bool s) {
+			isStatic = doManualUpdate = true;
+		}
+
+		void manual_update() {
+			doManualUpdate = true;
+		}
+
 		virtual void update(float delta);
-		virtual void display(float delta, ShaderManager shader_manager);
+		virtual void display(float delta, ShaderManager & shader_manager);
 		float get_scale_x();
 		float get_scale_y();
 		float get_scale_z();

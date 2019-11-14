@@ -99,15 +99,18 @@ void GameObject::update_verts(std::vector<glm::vec3> &_v, std::vector<glm::vec3>
 
 
 void GameObject::update(float delta) {
-	build_translate(pos_x, pos_y, pos_z);
-	build_rot(pos_pitch, pos_yaw, pos_roll);
-	build_scale(scale_x, scale_y, scale_z);
-	mat_transform = mat_translate * mat_rot * mat_scale;
-	build_bounds();
-	update_verts(bb_verts, bbverts);
+	if(!isStatic || doManualUpdate) {
+		build_translate(pos_x, pos_y, pos_z);
+		build_rot(pos_pitch, pos_yaw, pos_roll);
+		build_scale(scale_x, scale_y, scale_z);
+		mat_transform = mat_translate * mat_rot * mat_scale;
+		build_bounds();
+		update_verts(bb_verts, bbverts);
+		doManualUpdate = false;
+	}
 }
 
-void GameObject::display(float delta, ShaderManager shader_manager) {
+void GameObject::display(float delta, ShaderManager & shader_manager) {
 	if(debug) {
 		GLuint programID = shader_manager.use_shader("Debug");
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

@@ -13,6 +13,7 @@ private:
 public:
 	MapTile(float i_x, float i_y, float i_z, UniqueMapTile* i_ref_tile) :
 			GameObject(RenderType::RENDER_CUBE, 1.0f, i_x, i_y, i_z, 0.0f, 0.0f, 0.0f) {
+		set_static(true);
 		collidable = true;
 		drawing = true;
 		ref_tile = i_ref_tile;
@@ -27,7 +28,7 @@ public:
 	bool is_collidable();
 	bool is_drawing();
 	void update(float delta);
-	void display(float delta, ShaderManager shader_manager);
+	void display(float delta, ShaderManager & shader_manager);
 
 };
 

@@ -6,7 +6,7 @@
 
 class MapTileManager {
 private:
-	UniqueMapTile* tiles[TEXTURE_PACK_SIZE][TEXTURE_PACK_SIZE];
+	UniqueMapTile * tiles[TEXTURE_PACK_SIZE][TEXTURE_PACK_SIZE];
 
 public:
 	MapTileManager(GLuint textureId) {
@@ -21,7 +21,7 @@ public:
 		//delete tiles;
 	}
 
-	UniqueMapTile* getTile(int tex_x, int tex_y) {
+	UniqueMapTile * getTile(int tex_x, int tex_y) {
 		return tiles[tex_x][tex_y];
 	}
 
