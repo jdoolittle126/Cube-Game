@@ -1,11 +1,6 @@
 #include "Core/Game.h"
 
 /*
- * Technical:
- * Move Strings to a defines header
- * Orginize libraries
- *
- *
  * Inf Worlds
  * Models and Model List
  * Squid eating and size increase
@@ -18,6 +13,12 @@
  * Create NO new GL objects on a by-frame basis!
  * Fix Icon!
  * Culling?
+ *
+ * CURRENT:
+ * Finish Managers and impl
+ * Move Unique Tile thing into managers
+ *
+ * Finish this, then HUD
  */
 
 void initGlut(int argc, char** argv);

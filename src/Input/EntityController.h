@@ -1,15 +1,8 @@
-/*
- * EntityController.h
- *
- *  Created on: Nov 17, 2019
- *      Author: Jon
- */
+#pragma once
 
-#ifndef PLAYER_ENTITYCONTROLLER_H_
-#define PLAYER_ENTITYCONTROLLER_H_
+class EntityController {
 
 
 
 
-
-#endif /* PLAYER_ENTITYCONTROLLER_H_ */
+};

@@ -2,6 +2,8 @@
 
 #include "UniqueMapTile.h"
 
+//TODO MOVE TO MANAGERS AND CLEAN
+
 #define TEXTURE_PACK_SIZE 12
 
 class MapTileManager {

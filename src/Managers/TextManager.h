@@ -5,8 +5,10 @@
 class TextManager : Manager {
 private:
 	FT_Library ft;
-	std::map<std::string, GLuint> fonts;
-	GLuint build_shader(std::string fragment_loc, std::string vertex_loc);
+	std::map<std::string, FT_Face> fonts;
+	std::string current_font;
+
+	FT_Face build_font(std::string font_loc);
 
 public:
 	TextManager() {
@@ -17,8 +19,12 @@ public:
 
 	}
 
-	void create_font();
-	GLuint use_font();
+	void create_font(std::string reference_name, std::string font_loc);
+	void use_font();
+	void set_font_size(int size);
+
+
+	//GLuint use_font();
 	std::map<std::string, GLuint> get_fonts();
 
 };

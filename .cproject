@@ -4,7 +4,14 @@
 		<cconfiguration id="cdt.managedbuild.config.gnu.mingw.exe.debug.2085055077">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.mingw.exe.debug.2085055077" moduleId="org.eclipse.cdt.core.settings" name="Build Windows">
 				<externalSettings>
-					<externalSetting/>
+					<externalSetting>
+						<entry flags="RESOLVED" kind="libraryFile" name="freetype" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="glew32.dll" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="freeglut" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="glu32" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="opengl32" srcPrefixMapping="" srcRootPath=""/>
+						<entry flags="RESOLVED" kind="libraryFile" name="glew32" srcPrefixMapping="" srcRootPath=""/>
+					</externalSetting>
 				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE64" point="org.eclipse.cdt.core.BinaryParser"/>

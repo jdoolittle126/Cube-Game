@@ -7,6 +7,7 @@
 #include "GameStrings.h"
 #include "Errors.h"
 #include "Constants.h"
+#include "SettingValues.h"
 
 #include <iostream>
 #include <string.h>
