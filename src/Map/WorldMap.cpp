@@ -1,7 +1,4 @@
 #include "WorldMap.h"
-#include "MapTile.h"
-#include "../Core/Libraries.h"
-#include "MapTileManager.h"
 
 
 void WorldMap::update(float delta) {
@@ -10,14 +7,14 @@ void WorldMap::update(float delta) {
 	}
 }
 
-void WorldMap::display(float delta, ShaderManager & shader_manager) {
+void WorldMap::display(float delta, GameManager & manager) {
 	for(auto &tile : tiles) {
-	    if(tile->is_drawing()) tile->display(delta, shader_manager);
+	    if(tile->is_drawing()) tile->display(delta, manager);
 	}
 }
 
 void WorldMap::create_tile(float x, float y, float z, int tex_x, int tex_y) {
-	tiles.push_back(new MapTile(x, y, z, manager.getTile(tex_x, tex_y)));
+	tiles.push_back(new MapTile(x, y, z, tile_manager.getTile(tex_x, tex_y)));
 }
 
 void WorldMap::destroy_tile(float x, float y, float z) {

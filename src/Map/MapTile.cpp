@@ -20,9 +20,11 @@ bool MapTile::is_drawing() {
 void MapTile::update(float delta) {
 	GameObject::update(delta);
 }
-void MapTile::display(float delta, ShaderManager & shader_manager) {
+void MapTile::display(float delta, GameManager & manager) {
 	if(drawing) {
-		GLuint programID = shader_manager.use_shader("WorldObj");
+		//TODO only draw tops?
+
+		GLuint programID = manager.getShaderManager()->use_shader("Tile");
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
@@ -53,7 +55,7 @@ void MapTile::display(float delta, ShaderManager & shader_manager) {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
-		GameObject::display(delta, shader_manager);
+		GameObject::display(delta, manager);
 	}
 
 }

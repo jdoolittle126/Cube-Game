@@ -1,6 +1,6 @@
 #pragma once
+
 #include "UniqueMapTile.h"
-#include "../Core/Libraries.h"
 
 #define TEXTURE_PACK_SIZE 12
 

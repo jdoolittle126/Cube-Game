@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/Libraries.h"
+#include "../Core/Dependancies/Libraries.h"
 
 class UniqueMapTile {
 private:
@@ -141,6 +141,5 @@ public:
 	GLuint getUvboId() {
 		return uvboId;
 	}
-
 
 };

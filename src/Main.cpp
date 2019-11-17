@@ -1,6 +1,4 @@
-#include "Game.h"
-
-#define TITLE "hehe"
+#include "Core/Game.h"
 
 /*
  * Technical:
@@ -15,14 +13,17 @@
  * Smooth Camera
  * Simple Animations (CPU or GPU sided) (More models, or calculated submodel movements?)
  * Texturing
+ * Shader Compile Errors
  * Lighting
- * Memory Leaks!
  * Create NO new GL objects on a by-frame basis!
+ * Fix Icon!
+ * Culling?
  */
 
-void initGlut();
+void initGlut(int argc, char** argv);
+void initGlew();
+void initFreeType();
 void initGL();
-void setup_shaders();
 void reshape(int w, int h);
 void render();
 void keyboard(unsigned char key, int x, int y);
@@ -32,40 +33,37 @@ void keyboard_special_keys_up(int key, int x, int y);
 void mouse(int button, int state, int x, int y);
 void mouse_move(int x, int y);
 void tick();
+void unload_program();
 
-static ShaderManager shader_manager;
-
+static GameManager * game_manager;
 static Game * game;
 
 // --- -------- --- //
 
 int main(int argc, char** argv) {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-
-	int pos_x = (glutGet(GLUT_SCREEN_WIDTH)>>1)-(WINDOW_WIDTH>>1);
-	int pos_y = (glutGet(GLUT_SCREEN_HEIGHT)>>1)-(WINDOW_HEIGHT>>1);
-	
-	glutInitWindowPosition(pos_x,pos_y);
-	glutInitWindowSize(WINDOW_WIDTH,WINDOW_HEIGHT);
-	glutCreateWindow(TITLE);
-
-	if (GLEW_OK != glewInit()) std::cout << "no worky worky" << std::endl; //TODO Actual Error Message Here!
-
-	//glutFullScreen();
-	//Make the default cursor disappear
-	//glutSetCursor(GLUT_CURSOR_NONE);
-
-	initGlut();
+	initGlut(argc, argv);
+	initGlew();
+	initFreeType();
 	initGL();
-
-	setup_shaders();
-	game = new Game(shader_manager);
+	game_manager = new GameManager();
+	game = new Game(*game_manager);
 	glutMainLoop();
+
+	unload_program();
 	return 0;
 }
 
-void initGlut() {
+void initGlut(int argc, char** argv) {
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	int pos_x = (glutGet(GLUT_SCREEN_WIDTH)>>1)-(WINDOW_WIDTH>>1);
+	int pos_y = (glutGet(GLUT_SCREEN_HEIGHT)>>1)-(WINDOW_HEIGHT>>1);
+	glutInitWindowPosition(pos_x,pos_y);
+	glutInitWindowSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+	glutCreateWindow(WINDOW_TITLE);
+	//glutSetIconTitle("src/Assets/Icons/squid.ico");
+	//glutFullScreen();
+	//glutSetCursor(GLUT_CURSOR_NONE);
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(render);			
 	glutKeyboardFunc(keyboard);		
@@ -78,6 +76,14 @@ void initGlut() {
 	glutIdleFunc(tick);
 }
 
+void initGlew() {
+	if (GLEW_OK != glewInit()) log_error(ERROR_GLEW_INIT_FAIL);
+}
+
+void initFreeType() {
+
+}
+
 void initGL() {
     glShadeModel(GL_SMOOTH);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -86,10 +92,11 @@ void initGL() {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
@@ -98,12 +105,7 @@ void initGL() {
     glClearStencil(0);
     glClearDepth(1.0f);
     glDepthFunc(GL_LEQUAL);
-}
 
-void setup_shaders() {
-	shader_manager.create_shader("Debug", "src/GLSL/Shaders/Fragment/debug.fragment", "src/GLSL/Shaders/Vertex/debug.vertex");
-	shader_manager.create_shader("WorldObj", "src/GLSL/Shaders/Fragment/world_obj.fragment", "src/GLSL/Shaders/Vertex/world_obj.vertex");
-	shader_manager.create_shader("Tile", "src/GLSL/Shaders/Fragment/tile.fragment", "src/GLSL/Shaders/Vertex/tile.vertex");
 }
 
 
@@ -149,5 +151,8 @@ void tick() {
 	//glutWarpPointer(w_x, w_y);
 }
 
+void unload_program() {
+	delete game;
+}
 
 

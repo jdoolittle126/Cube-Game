@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Core/ShaderManager.h"
-#include "../Core/GameObject.h"
-#include "../Core/Libraries.h"
 #include "UniqueMapTile.h"
+
+#include "../Managers/GameManager.h"
+#include "../Object/GameObject.h"
 
 class MapTile: public GameObject {
 private:
@@ -28,7 +28,7 @@ public:
 	bool is_collidable();
 	bool is_drawing();
 	void update(float delta);
-	void display(float delta, ShaderManager & shader_manager);
+	void display(float delta, GameManager & manager);
 
 };
 

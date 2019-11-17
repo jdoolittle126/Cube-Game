@@ -1,0 +1,45 @@
+#version 330 core
+
+in vec3 v_model;
+in vec2 v_tex;
+in vec3 v_normal;
+
+uniform vec4 light_pos;
+uniform vec4 light_amb;
+uniform vec4 light_diff;
+uniform vec4 light_spec;
+uniform sampler2D sampler;
+
+void main() {
+	
+	bool calc_lighting = false;
+	
+	vec3 test2 = vec3(1, 0, 0);
+	
+	if(calc_lighting) {
+	
+		vec3 normal = normalize(v_normal);
+	    vec3 light;
+	    
+	    if(light_pos.w == 0.0) {
+	    	light = normalize(light_pos.xyz);
+	    } else {
+	        light = normalize(light_pos.xyz - v_model);
+	    }
+	    
+	    vec3 view = normalize(-v_model);
+	    vec3 halfv = normalize(light + view);
+	
+	    vec3 test = light_amb.rgb * test2;
+	    float dotNL = max(dot(normal, light), 0.0);
+	    test += light_diff.rgb * test2 * dotNL;
+	    test *= texture(sampler, v_tex).rgb;
+	    float dotNH = max(dot(normal, halfv), 0.0);
+	   	test += pow(dotNH, 128.0) * light_spec.rgb * test2;
+	    gl_FragColor = vec4(test, 1);
+	    
+    } else {
+    	gl_FragColor = vec4(texture(sampler, v_tex).rgb, 1);
+    }
+
+} 
