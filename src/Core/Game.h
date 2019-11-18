@@ -7,6 +7,8 @@
 #include "../Rendering/Camera.h"
 #include "../Object/Entity.h"
 
+#include "../Utils/TextureUtils.h"
+
 int frame_aggragator = 0;
 float delta_aggragator = 0;
 
@@ -42,7 +44,8 @@ class Game {
 			dragging = false;
 			m_x = m_y = _m_x =_m_y = 0.0f;
 			camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-			textureId = build_texture("src\\Assets\\Road.bmp", GL_TEXTURE_2D);
+			//textureId = build_texture("src\\Assets\\Road.bmp", GL_TEXTURE_2D);
+			textureId = test_load_texture("src\\Assets\\Road.bmp");
 			map = new WorldMap(textureId);
 			test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", "src\\Assets\\Models\\UV.bmp"));
 			manager = i_manager;
@@ -76,8 +79,9 @@ class Game {
 		}
 
 		void update() {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable( GL_BLEND );
 			update_delta();
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			map->update(delta);
 			for(auto &obj : object_list) {
 			    obj->update(delta);
@@ -106,6 +110,8 @@ class Game {
 		}
 
 		void build_map() {
+
+			map->create_tile(3, 0, 3, 0, 0);
 
 			for(int i = -10; i < 10; i++){
 				for(int j = -10; j < 10; j++){

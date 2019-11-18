@@ -7,5 +7,5 @@ in vec3 v_normal;
 uniform sampler2D sampler;
 
 void main() {
-    	gl_FragColor = vec4(texture(sampler, v_tex).rgb, 1);
+    	gl_FragColor = texture(sampler, v_tex).rgba;
 } 

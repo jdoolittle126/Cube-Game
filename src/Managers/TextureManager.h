@@ -15,6 +15,9 @@ public:
 
 	}
 
+	void create_texture(std::string texture_loc);
+	GLuint use_texture();
+
 
 
 
