@@ -7,8 +7,6 @@
 #include "../Rendering/Camera.h"
 #include "../Object/Entity.h"
 
-#include "../Utils/TextureUtils.h"
-
 int frame_aggragator = 0;
 float delta_aggragator = 0;
 
@@ -44,10 +42,9 @@ class Game {
 			dragging = false;
 			m_x = m_y = _m_x =_m_y = 0.0f;
 			camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-			//textureId = build_texture("src\\Assets\\Road.bmp", GL_TEXTURE_2D);
-			textureId = test_load_texture("src\\Assets\\Road.bmp");
+			textureId = manager.getTextureManager()->test_load_texture("src\\Assets\\Road.bmp", true);
 			map = new WorldMap(textureId);
-			test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", "src\\Assets\\Models\\UV.bmp"));
+			test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", manager.getTextureManager()->test_load_texture("src\\Assets\\Models\\UV.bmp", false)));
 			manager = i_manager;
 			test->set_world_map(map);
 			object_list.push_back(test);
@@ -109,15 +106,32 @@ class Game {
 
 		}
 
-		void build_map() {
-
-			map->create_tile(3, 0, 3, 0, 0);
-
-			for(int i = -10; i < 10; i++){
-				for(int j = -10; j < 10; j++){
-					map->create_tile(i, -1.0f, -j, (i+10)%12, (j+10)%12);
+		void create_intersection(int x, int y) {
+			for(int i = 0; i <= 7; i++){
+				for(int j = 0; j <= 7; j++){
+					map->create_tile(i+x, -1.0f, -j+y, (i+2)%12, (j+2)%12);
 				}
 			}
+		}
+
+		void road_horz(int x, int y) {
+			for(int i = 0; i <= 7; i++){
+					map->create_tile(i+x, -1.0f, y, (i+2)%12, 1);
+			}
+		}
+
+		void road_vert(int x, int y) {
+			for(int i = 0; i <= 7; i++){
+					map->create_tile(x, -1.0f, -i+y, 1, (i+2)%12);
+			}
+		}
+
+		void build_map() {
+			//80 x 274 w 13 units
+			create_intersection(0, 0);
+			road_horz(0, 1);
+			road_vert(8, 0);
+
 
 		}
 

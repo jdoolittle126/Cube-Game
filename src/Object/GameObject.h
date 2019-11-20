@@ -22,7 +22,7 @@ protected:
 				pos_yaw,
 				pos_roll;
 
-	glm::mat4x4 mat_transform,
+	glm::mat4x4
 				_mat_transform,
 				mat_translate,
 				mat_scale,
@@ -30,6 +30,8 @@ protected:
 
 
 	public:
+		//TODO function instead of public member
+		glm::mat4x4 mat_transform;
 
 		GameObject(RenderType i_render_type, float i_size, float i_x, float i_y, float i_z, float i_yaw, float i_pitch, float i_roll) {
 			isStatic = doManualUpdate = false;
@@ -122,6 +124,7 @@ protected:
 			doManualUpdate = true;
 		}
 
+		//virtual void init(GameManager & manager) = 0;
 		virtual void update(float delta) = 0;
 		virtual void display(float delta, GameManager & manager) = 0;
 		float get_scale_x();

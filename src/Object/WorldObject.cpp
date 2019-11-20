@@ -5,7 +5,7 @@
 //SHADER ISSUES W TEXTURE
 //MAY BE THE SOURCE OF SECOND BLOCK NOT HAVING DEBUG BOX
 
- void WorldObject::build_bounds(){
+ void WorldObject::build_bounds() {
 		bbverts.clear();
 		float s_x, s_y, s_z;
 		cube_bound b;
@@ -30,7 +30,7 @@
 		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 		bb_verts.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
 		GameObject::build_debug();
-	}
+}
 
 void WorldObject::update(float delta) {
 	GameObject::update(delta);
@@ -47,10 +47,10 @@ void WorldObject::update(float delta) {
 }
 
 void WorldObject::display(float delta, GameManager & manager) {
-
+		//TODO optimize this for many objects
 		GLuint programID = manager.getShaderManager()->use_shader("WorldObj");
-
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		GLuint textureID  = glGetUniformLocation(programID, "sampler");
 		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 		glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);

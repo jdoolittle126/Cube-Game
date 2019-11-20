@@ -1,5 +1,7 @@
 #pragma once
 
+//TODO Defines for Linux, Apple, and Windows, maybe Mobile
+
 #ifndef GLEW_STATIC
 #define GLEW_STATIC
 #endif
@@ -53,7 +55,5 @@ enum RenderType {RENDER_CUBE, RENDER_MODEL};
 
 void log_error(std::string error);
 void log_error(std::string error, char log[ERROR_LOG_SIZE]);
-
-GLuint build_texture(std::string path, GLenum type);
 
 

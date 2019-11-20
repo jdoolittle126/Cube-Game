@@ -2,12 +2,10 @@
 
 /*
  * Inf Worlds
- * Models and Model List
  * Squid eating and size increase
  * Dryness factor ?
  * Smooth Camera
  * Simple Animations (CPU or GPU sided) (More models, or calculated submodel movements?)
- * Texturing
  * Shader Compile Errors
  * Lighting
  * Create NO new GL objects on a by-frame basis!
@@ -19,6 +17,12 @@
  * Move Unique Tile thing into managers
  *
  * Finish this, then HUD
+ *
+ *
+ * ISSUES:
+ * When moving collide with something and then
+ * move parallel to it, you wont automatically move the correct way
+ * when you are past the object
  */
 
 void initGlut(int argc, char** argv);

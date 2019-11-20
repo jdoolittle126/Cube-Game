@@ -21,11 +21,13 @@ void MapTile::update(float delta) {
 	GameObject::update(delta);
 }
 void MapTile::display(float delta, GameManager & manager) {
-	if(drawing) {
-		//TODO only draw tops?
 
+		glBindBuffer(GL_ARRAY_BUFFER, ref_tile->getUvboId());
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+/*
 		GLuint programID = manager.getShaderManager()->use_shader("Tile");
-
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		GLuint matrixAttributePosition = glGetUniformLocation(programID, "mat_model_view");
 		glUniformMatrix4fv(matrixAttributePosition, 1, GL_FALSE, &mat_transform[0][0]);
@@ -55,7 +57,8 @@ void MapTile::display(float delta, GameManager & manager) {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+*/
+
 		GameObject::display(delta, manager);
-	}
 
 }

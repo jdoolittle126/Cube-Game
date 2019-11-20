@@ -1,10 +1,7 @@
 #pragma once
 
 #include "WorldObject.h"
-
-#include "../Core/Dependancies/Libraries.h"
 #include "../Map/WorldMap.h"
-#include "../Rendering/Model.h"
 
 class Entity : public WorldObject {
 	public:

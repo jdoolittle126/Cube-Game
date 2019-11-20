@@ -22,7 +22,6 @@ public:
 		delete ref_tile;
 	}
 
-
 	void set_collidable(bool v);
 	void set_drawing(bool v);
 	bool is_collidable();

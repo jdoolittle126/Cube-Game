@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 
-#include "../Core/Dependancies/Libraries.h"
 #include "../Utils/OBJ_Loader.h"
 #include "../Rendering/Model.h"
 
@@ -11,7 +10,6 @@ protected:
 	std::vector<Model*> model;
 	bool animated = false;
 	int current_model = 0;
-
 	float delta_arg = 0;
 
 public:

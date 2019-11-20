@@ -12,15 +12,18 @@ private:
 
 public:
 	MapTileManager(GLuint textureId) {
+		//TODO rename this function?
+		UniqueMapTile::build_static_members(textureId);
 		for(int x = 0; x < TEXTURE_PACK_SIZE; x++) {
 			for(int y = 0; y < TEXTURE_PACK_SIZE; y++) {
-				tiles[x][y] = new UniqueMapTile(textureId, x, y);
+				tiles[x][y] = new UniqueMapTile(x, y);
 			}
 		}
 	}
 
 	~MapTileManager() {
-		//delete tiles;
+		delete [] tiles;
+		UniqueMapTile::destroy_static_members();
 	}
 
 	UniqueMapTile * getTile(int tex_x, int tex_y) {
