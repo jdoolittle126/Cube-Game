@@ -106,7 +106,8 @@ void initGL() {
     glClearColor(0, 0, 0, 0);
     glClearStencil(0);
     glClearDepth(1.0f);
-    glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LESS);
+
 
 }
 

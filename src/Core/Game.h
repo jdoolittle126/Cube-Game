@@ -42,12 +42,16 @@ class Game {
 			dragging = false;
 			m_x = m_y = _m_x =_m_y = 0.0f;
 			camera = new Camera(WINDOW_WIDTH, WINDOW_HEIGHT);
-			textureId = manager.getTextureManager()->test_load_texture("src\\Assets\\Road.bmp", true);
+			textureId = manager.getTextureManager()->test_load_texture("src\\Assets\\TextureMaps\\Road.bmp", true);
 			map = new WorldMap(textureId);
-			test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", manager.getTextureManager()->test_load_texture("src\\Assets\\Models\\UV.bmp", false)));
+			test = new Entity(1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, new Model("src\\Assets\\Models\\squid.obj", manager.getTextureManager()->test_load_texture("src\\Assets\\UV\\UV.bmp", false)));
 			manager = i_manager;
 			test->set_world_map(map);
 			object_list.push_back(test);
+
+			//TEST
+			manager.getFontManager()->create_font("test", "src\\Assets\\Fonts\\test.ttf");
+
 		}
 		~Game() {
 			delete camera;
@@ -55,7 +59,6 @@ class Game {
 			delete test;
 			while(!object_list.empty()) delete object_list.back(), object_list.pop_back();
 		}
-
 
 		bool running = true;
 
@@ -85,6 +88,12 @@ class Game {
 			}
 		}
 
+		void test_render_string() {
+			manager.getFontManager()->use_font("test");
+
+
+		}
+
 		void display() {
 			camera->set_pos(test->get_pos_x(), test->get_pos_y()+(3.0f*test->get_scale_y()), test->get_pos_z()+(4.0f*test->get_scale_z()));
 			camera->look_at(test->get_pos_x(), test->get_pos_y(), test->get_pos_z());
@@ -100,9 +109,8 @@ class Game {
 			for(auto &obj : object_list) {
 			    obj->display(delta, manager);
 			}
-		}
 
-		void draw_hud() {
+			test_render_string();
 
 		}
 

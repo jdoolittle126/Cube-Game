@@ -5,7 +5,7 @@
 void GameManager::setup_managers() {
 	shader_manager	= new ShaderManager();
 	texture_manager	= new TextureManager();
-	text_manager	= new TextManager();
+	font_manager	= new FontManager();
 	model_manager	= new ModelManager();
 	settings_manager= new SettingsManager();
 }
@@ -13,7 +13,7 @@ void GameManager::setup_managers() {
 void GameManager::deconstruct_managers() {
 	delete 	shader_manager;
 	delete 	texture_manager;
-	delete 	text_manager;
+	delete 	font_manager;
 	delete 	model_manager;
 	delete 	settings_manager;
 }
@@ -29,7 +29,7 @@ void GameManager::setup_manager_texture() {
 
 }
 
-void GameManager::setup_manager_text() {
+void GameManager::setup_manager_font() {
 
 }
 
